@@ -4,7 +4,8 @@ import './App.css';
 
 const loading = () => <div className="animated fadeIn pt-3 text-center">Cargando...</div>;
 
-const SignIn = React.lazy(() => import('./Componentes/SignIn'));
+const Login = React.lazy(() => import('./Componentes/Login/Login'));
+const Layout = React.lazy(() => import('./Componentes/Layout/Layout'));
 
 class App extends Component {
 
@@ -13,7 +14,8 @@ class App extends Component {
 			<HashRouter>
 				<React.Suspense fallback={loading()}>
 					<Switch>
-						<Route path="/" name="SignIn" render={props => <SignIn {...props} />} />
+						<Route exact path='/login' name='Login' render={props => <Login {...props} />} />
+						<Route path='/' name='Inicio' render={props => <Layout {...props} />}/>
 					</Switch>
 				</React.Suspense>
 			</HashRouter>
