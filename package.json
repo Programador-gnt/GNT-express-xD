@@ -5,8 +5,10 @@
   "dependencies": {
     "@material-ui/core": "^4.5.1",
     "@material-ui/icons": "^4.5.1",
+    "font-awesome": "^4.7.0",
     "react": "^16.10.2",
     "react-dom": "^16.10.2",
+    "react-metismenu": "^1.4.0",
     "react-router-dom": "^5.1.2",
     "react-s-alert": "^1.4.1",
     "react-scripts": "3.2.0"

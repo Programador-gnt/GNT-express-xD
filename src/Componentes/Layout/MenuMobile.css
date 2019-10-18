@@ -1,0 +1,14 @@
+.menumobile{
+    height: 2000px;
+	box-shadow: 2px 0px 5px rgba(0,0,0,0.5);
+	position: absolute;
+	top: 60px;
+	left: 0;
+	z-index: 200;
+	transform: translateX(-30em);
+	transition: transform 0.5s ease-in;
+}
+
+.menumobile.open{
+	transform: translateX(0);
+}

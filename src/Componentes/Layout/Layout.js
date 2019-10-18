@@ -1,5 +1,5 @@
 import React from 'react';
-import Cabecera from './Cabecera'
+import Cabecera from './Cabecera';
 
 function Layout() {
 
