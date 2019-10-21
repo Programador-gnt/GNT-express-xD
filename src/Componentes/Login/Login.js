@@ -19,7 +19,7 @@ import 'react-s-alert/dist/s-alert-css-effects/jelly.css';
 import 'react-s-alert/dist/s-alert-css-effects/stackslide.css';
 import 'react-s-alert/dist/s-alert-css-effects/genie.css';
 import 'react-s-alert/dist/s-alert-css-effects/bouncyflip.css';
-import { Redirect } from 'react-router-dom'
+import { Redirect } from 'react-router-dom';
 
 function Login() {
 	const [login, setLogin] = React.useState({})
@@ -82,7 +82,7 @@ function Login() {
 		},
 		avatar: {
 			margin: theme.spacing(1),
-			backgroundColor: theme.palette.secondary.main,
+			backgroundColor: theme.palette.primary.main,
 		},
 		form: {
 			width: '100%',
@@ -96,11 +96,11 @@ function Login() {
 	const classes = useStyles();
 
 	if (redireccionar === true) {
-		return (<Redirect to='/inicio'/>)
+		return (<Redirect to='/'/>)
 	}
 
 	if (localStorage.getItem('Token')) {
-		return (<Redirect to='/inicio'/>)
+		return (<Redirect to='/'/>)
 	}
 
 	return (

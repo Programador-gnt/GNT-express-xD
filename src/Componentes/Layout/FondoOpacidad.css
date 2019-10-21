@@ -4,6 +4,25 @@
 	width: 100%;
 	background: rgba(0,0,0,0.3);
 	z-index: 100;
-	top: 6%;
+	top: 63px;
 	left: 0;
+}
+
+
+@media (max-width: 768px) {
+	.opacidad{
+		top: 62px
+	}
+}
+
+@media (max-width: 375px) {
+	.opacidad{
+		top: 55px
+	}
+}
+
+@media (max-width: 414px) {
+	.opacidad{
+		top: 55px
+	}
 }

@@ -2,7 +2,7 @@
     height: 2000px;
 	box-shadow: 2px 0px 5px rgba(0,0,0,0.5);
 	position: absolute;
-	top: 60px;
+	top: 63px;
 	left: 0;
 	z-index: 200;
 	transform: translateX(-30em);
@@ -11,4 +11,28 @@
 
 .menumobile.open{
 	transform: translateX(0);
+}
+
+@media (max-width: 768px) {
+	.menumobile{
+		position: absolute;
+		top: 62px;
+		left: 0;
+	}
+}
+
+@media (max-width: 375px) {
+	.menumobile{
+		position: absolute;
+		top: 55px;
+		left: 0;
+	}
+}
+
+@media (max-width: 414px) {
+	.menumobile{
+		position: absolute;
+		top: 55px;
+		left: 0;
+	}
 }

@@ -3,17 +3,12 @@ import { withRouter } from 'react-router-dom';
 import MetisMenu from 'react-metismenu';
 import './MenuMobile.css';
 import Config from '../Config/Config';
-import FolderIcon from '@material-ui/icons/Folder';
 
 
 function MenuMobile(props) {
 	const [menu, setMenu] = React.useState([])
 
 	React.useEffect(() => {
-		didMount()
-	}, []);
-
-	const didMount = () => {
 		if (localStorage.getItem('Token') === null) {
 
 		} else {
@@ -21,7 +16,7 @@ function MenuMobile(props) {
 			var token = datos.accessToken
 			consultarapi(token)
 		}
-	}
+	}, []);
 
 	const consultarapi = async (token) => {
 		await fetch(`${Config.url}api/menu/treelistar`, {
@@ -44,14 +39,15 @@ function MenuMobile(props) {
 
 	function obtenerMenus(menu) {
 		let menuLista = [];
+		let icono = "";
 
 		menu.forEach(function (menuItem) {
 			let menuItemChildren = [];
-			let icono = "";
+			
 
 			if (menuItem.children.length > 0) {
 				menuItemChildren = obtenerMenus(menuItem.children);
-				icono = <FolderIcon/>
+				icono = ' fa fa-folder '
 
 			} if (menuItem.name === "Inicio") {
 				icono = " fa fa-home ";

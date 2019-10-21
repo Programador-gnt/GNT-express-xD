@@ -21,7 +21,7 @@ const useStyles = makeStyles(theme => ({
 	},
 	title: {
 		flexGrow: 1,
-	},
+	}
 }));
 
 export default function MenuAppBar() {
@@ -62,7 +62,7 @@ export default function MenuAppBar() {
 
 	return (
 		<div className={classes.root}>
-			<AppBar position="static">
+			<AppBar>
 				<Toolbar>
 					<IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu">
 						<HamburgerMenu
@@ -76,6 +76,9 @@ export default function MenuAppBar() {
 							borderRadius={0}
 							animationDuration={0.5} />
 					</IconButton>
+					<Typography variant="h6" noWrap>
+						NEW TRANSPORT S.A.
+          			</Typography>
 					<Typography variant="h6" className={classes.title}>
 
 					</Typography>
@@ -102,7 +105,7 @@ export default function MenuAppBar() {
 								horizontal: 'right',
 							}}
 							open={open}
-							onClose={handleClose}
+							onClose={() => setAnchorEl(null)}
 						>
 							<MenuItem onClick={handleClose}>Cerrar Sesión</MenuItem>
 						</Menu>
