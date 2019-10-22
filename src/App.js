@@ -1,26 +1,23 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { HashRouter, Route, Switch } from 'react-router-dom';
 import './App.css';
 
-const loading = () => <div className="animated fadeIn pt-3 text-center">Cargando...</div>;
+const loading = () => <div>Cargando...</div>;
 
-const Login = React.lazy(() => import('./Componentes/Login/Login'));
-const Layout = React.lazy(() => import('./Componentes/Layout/Layout'));
+function App() {
 
-class App extends Component {
+	const Login = React.lazy(() => import('./Componentes/Login/Login'));
+	const Layout = React.lazy(() => import('./Componentes/Layout/Layout'));
 
-	render() {
-		return (
-			<HashRouter>
-				<React.Suspense fallback={loading()}>
-					<Switch>
-						<Route exact path='/login' name='Login' render={props => <Login {...props} />} />
-						<Route path='/' name='Inicio' render={props => <Layout {...props} />}/>
-					</Switch>
-				</React.Suspense>
-			</HashRouter>
-		);
-	}
+	return (
+		<HashRouter>
+			<React.Suspense fallback={loading()}>
+				<Switch>
+					<Route exact path='/login' name='Login' render={props => <Login {...props} />} />
+					<Route path='/' name='Inicio' render={props => <Layout {...props} />} />
+				</Switch>
+			</React.Suspense>
+		</HashRouter>
+	);
 }
-
 export default App;

@@ -48,11 +48,11 @@ export default function MenuAppBar() {
 	}
 
 	if (salir === true) {
-		return (<Redirect to='login' />)
+		return (<Redirect to='/login' />)
 	}
 
 	if (localStorage.getItem('Token') === null) {
-		return (<Redirect to='login' />)
+		return (<Redirect to='/login' />)
 	}
 
 	var opacidad;

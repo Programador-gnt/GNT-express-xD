@@ -6,10 +6,7 @@ import routes from '../../routes';
 import Footer from './Footer'
 
 function Layout() {
-
-	React.useEffect(() => {
-	}, []);
-
+	
 	return (
 		<div>
 			<Paper elevation={4}>
@@ -29,7 +26,7 @@ function Layout() {
 								)} />
 						) : (null);
 					})}
-					<Redirect to="/" />
+					<Redirect to="/login" />
 				</Switch>
 			</main>
 			<Footer />

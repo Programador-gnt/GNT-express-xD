@@ -96,11 +96,11 @@ function Login() {
 	const classes = useStyles();
 
 	if (redireccionar === true) {
-		return (<Redirect to='/'/>)
+		return (<Redirect to='/inicio'/>)
 	}
 
 	if (localStorage.getItem('Token')) {
-		return (<Redirect to='/'/>)
+		return (<Redirect to='/inicio'/>)
 	}
 
 	return (
