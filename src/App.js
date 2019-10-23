@@ -2,7 +2,7 @@ import React from 'react';
 import { HashRouter, Route, Switch } from 'react-router-dom';
 import './App.css';
 
-const loading = () => <div>Cargando...</div>;
+const loading = () => <div className="animated fadeIn pt-1 text-center">Cargando...</div>
 
 function App() {
 

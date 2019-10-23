@@ -10,20 +10,23 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import { consumeWS } from '../Config/WebService';
-import Alert from 'react-s-alert';
-import 'react-s-alert/dist/s-alert-default.css';
-import 'react-s-alert/dist/s-alert-css-effects/slide.css';
-import 'react-s-alert/dist/s-alert-css-effects/scale.css';
-import 'react-s-alert/dist/s-alert-css-effects/flip.css';
-import 'react-s-alert/dist/s-alert-css-effects/jelly.css';
-import 'react-s-alert/dist/s-alert-css-effects/stackslide.css';
-import 'react-s-alert/dist/s-alert-css-effects/genie.css';
-import 'react-s-alert/dist/s-alert-css-effects/bouncyflip.css';
 import { Redirect } from 'react-router-dom';
+import Snackbar from '@material-ui/core/Snackbar';
+import SnackbarContent from '@material-ui/core/SnackbarContent';
+import ErrorIcon from '@material-ui/icons/Error';
+import { red } from '@material-ui/core/colors';
+import clsx from 'clsx';
+import CloseIcon from '@material-ui/icons/Close';
+import IconButton from '@material-ui/core/IconButton';
+
+const variantIcon = {
+	success: ErrorIcon
+}
 
 function Login() {
 	const [login, setLogin] = React.useState({})
 	const [redireccionar, setRedireccionar] = React.useState(false)
+	const [openMensaje, setOpenMensaje] = React.useState(false);
 
 	React.useEffect(() => {
 	}, []);
@@ -39,10 +42,7 @@ function Login() {
 					}
 				})
 				.catch(() => {
-					Alert.error('Nickname o contraseña incorrectas', {
-						position: 'top-right',
-						effect: 'stackslide'
-					})
+					setOpenMensaje(true)
 				});
 		}
 	}
@@ -54,7 +54,7 @@ function Login() {
 		})
 	}
 
-	const Enter =(e)=>{
+	const Enter = (e) => {
 		if (e.keyCode === 13) {
 			Ingresar()
 		}
@@ -64,7 +64,7 @@ function Login() {
 		return (
 			<Typography variant="body2" color="textSecondary" align="center">
 				{'Copyright © '}
-				<Link color="inherit" href="https://newtransport.net/">
+				<Link color="inherit" href="http://newtransport.net" target='_blank'>
 					GNT - T.I.
 		  </Link>{' '}
 				{new Date().getFullYear()}
@@ -91,29 +91,88 @@ function Login() {
 		submit: {
 			margin: theme.spacing(3, 0, 2),
 		},
+		success: {
+			backgroundColor: red[600],
+		},
+		iconVariant: {
+			opacity: 0.9,
+			marginRight: theme.spacing(1),
+		},
+		icon: {
+			fontSize: 20,
+		},
+		message: {
+			display: 'flex',
+			alignItems: 'center',
+		}
 	}));
+
+	function MySnackbarContentWrapper(props) {
+		const classes = useStyles();
+		const { className, message, onClose, variant, ...other } = props;
+		const Icon = variantIcon[variant];
+
+		return (
+			<SnackbarContent
+				className={clsx(classes[variant], className)}
+				aria-describedby="client-snackbar"
+				message={
+					<span id="client-snackbar" className={classes.message}>
+						<Icon className={clsx(classes.icon, classes.iconVariant)} />
+						{message}
+					</span>
+				}
+				action={[
+					<IconButton key="close" aria-label="close" color="inherit" onClick={onClose}>
+						<CloseIcon className={classes.icon} />
+					</IconButton>,
+				]}
+				{...other}
+			/>
+		);
+	}
 
 	const classes = useStyles();
 
+	const handleCloseMensaje = (event, reason) => {
+		if (reason === 'clickaway') {
+			return;
+		}
+
+		setOpenMensaje(false);
+	}
+
 	if (redireccionar === true) {
-		return (<Redirect to='/inicio'/>)
+		return (<Redirect to='/inicio' />)
 	}
 
 	if (localStorage.getItem('Token')) {
-		return (<Redirect to='/inicio'/>)
+		return (<Redirect to='/inicio' />)
 	}
 
 	return (
 		<Container component="main" maxWidth="xs">
-			<Alert stack={true} timeout={3500} />
 			<CssBaseline />
+			<Snackbar
+				anchorOrigin={{
+					vertical: 'bottom',
+					horizontal: 'left',
+				}}
+				open={openMensaje}
+				autoHideDuration={6000}
+				onClose={handleCloseMensaje}>
+				<MySnackbarContentWrapper
+					onClose={handleCloseMensaje}
+					variant="success"
+					message="Nickname o contraseña incorrectos!" />
+			</Snackbar>
 			<div className={classes.paper}>
 				<Avatar className={classes.avatar}>
 					<LockOutlinedIcon />
 				</Avatar>
 				<Typography component="h1" variant="h5">
 					Login
-        </Typography>
+        		</Typography>
 
 				<TextField
 					variant="outlined"
@@ -125,8 +184,7 @@ function Login() {
 					name="nickname"
 					autoComplete="nickname"
 					autoFocus
-					onChange={onChange.bind()}
-				/>
+					onChange={onChange.bind()} />
 				<TextField
 					variant="outlined"
 					margin="normal"
@@ -138,17 +196,15 @@ function Login() {
 					id="password"
 					autoComplete="current-password"
 					onChange={onChange.bind()}
-					onKeyDown={Enter.bind()}
-				/>
+					onKeyDown={Enter.bind()} />
 				<Button
 					fullWidth
 					variant="contained"
 					color="primary"
 					className={classes.submit}
-					onClick={() => Ingresar()}
-				>
+					onClick={() => Ingresar()}>
 					Ingresar
-          </Button>
+          		</Button>
 			</div>
 			<Box mt={8}>
 				<Copyright />

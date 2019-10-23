@@ -4,7 +4,6 @@ import MetisMenu from 'react-metismenu';
 import './MenuMobile.css';
 import Config from '../Config/Config';
 
-
 function MenuMobile(props) {
 	const [menu, setMenu] = React.useState([])
 
@@ -39,7 +38,7 @@ function MenuMobile(props) {
 
 	function obtenerMenus(menu) {
 		let menuLista = [];
-		let icono = "";
+		let icono
 
 		menu.forEach(function (menuItem) {
 			let menuItemChildren = [];
@@ -47,7 +46,7 @@ function MenuMobile(props) {
 
 			if (menuItem.children.length > 0) {
 				menuItemChildren = obtenerMenus(menuItem.children);
-				icono = ' fa fa-folder '
+				icono = " fa fa-folder ";
 
 			} if (menuItem.name === "Inicio") {
 				icono = " fa fa-home ";

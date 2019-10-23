@@ -9,7 +9,7 @@ function Copyright() {
   return (
     <Typography variant="body2" color="textSecondary" align="center">
       {'Copyright © '}
-      <Link color="inherit" href="https://newtransport.net/">
+      <Link color="inherit" href="http://newtransport.net" target='_blank'>
         GNT Servicios Generales S.A.
       </Link>{' '}
       {new Date().getFullYear()}

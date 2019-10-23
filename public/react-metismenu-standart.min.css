@@ -76,8 +76,7 @@
                                     -webkit-transition:height .5s,color .5s,background-color .5s;
                                     display:block;
                                     line-height:2.5em;
-                                    text-decoration:none;
-                                    margin-left: 10px;
+                                    text-decoration:none
                                 }
 
                                 .metismenu-link:hover{

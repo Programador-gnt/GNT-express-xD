@@ -13,7 +13,21 @@ import consumeWS from '../../Config/WebService';
 import Modal from '@material-ui/core/Modal';
 import Backdrop from '@material-ui/core/Backdrop';
 import Fade from '@material-ui/core/Fade';
-import { fileURLToPath } from 'url';
+import TextField from '@material-ui/core/TextField';
+import Typography from '@material-ui/core/Typography';
+import IconButton from '@material-ui/core/IconButton';
+import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
+import EditIcon from '@material-ui/icons/Edit';
+import Snackbar from '@material-ui/core/Snackbar';
+import SnackbarContent from '@material-ui/core/SnackbarContent';
+import ErrorIcon from '@material-ui/icons/Error';
+import { red } from '@material-ui/core/colors';
+import clsx from 'clsx';
+import CloseIcon from '@material-ui/icons/Close';
+
+const variantIcon = {
+	success: ErrorIcon
+}
 
 const useStyles = makeStyles(theme => ({
 	root: {
@@ -39,8 +53,47 @@ const useStyles = makeStyles(theme => ({
 		border: '2px solid #000',
 		boxShadow: theme.shadows[5],
 		padding: theme.spacing(2, 4, 3),
+	},
+	success: {
+		backgroundColor: red[600],
+	},
+	iconVariant: {
+		opacity: 0.9,
+		marginRight: theme.spacing(1),
+	},
+	icon: {
+		fontSize: 20,
+	},
+	message: {
+		display: 'flex',
+		alignItems: 'center',
 	}
 }));
+
+function MySnackbarContentWrapper(props) {
+	const classes = useStyles();
+	const { className, message, onClose, variant, ...other } = props;
+	const Icon = variantIcon[variant];
+
+	return (
+		<SnackbarContent
+			className={clsx(classes[variant], className)}
+			aria-describedby="client-snackbar"
+			message={
+				<span id="client-snackbar" className={classes.message}>
+					<Icon className={clsx(classes.icon, classes.iconVariant)} />
+					{message}
+				</span>
+			}
+			action={[
+				<IconButton key="close" aria-label="close" color="inherit" onClick={onClose}>
+					<CloseIcon className={classes.icon} />
+				</IconButton>,
+			]}
+			{...other}
+		/>
+	);
+}
 
 const columns = [
 	{ id: 'id_anexo', label: 'ID', minWidth: 170 },
@@ -93,6 +146,10 @@ export default function Anexos() {
 	const rowsPerPage = 50
 	const [rows, setRows] = React.useState([])
 	const [openNombre, setOpenNombre] = React.useState(false)
+	const [openId, setOpenId] = React.useState(false)
+	const [openAlias, setOpenAlias] = React.useState(false)
+	const [opentdocumento, setOpentdocumento] = React.useState(false)
+	const [openNDocumento, setOpenNDocumento] = React.useState(false)
 	const [total, setTotal] = React.useState(0)
 	const [filtro, setFiltro] = React.useState({
 		page: 1,
@@ -107,6 +164,7 @@ export default function Anexos() {
 		sortcolumn: "",
 		sortorder: "desc"
 	})
+	const [openMensaje, setOpenMensaje] = React.useState(false);
 
 	React.useEffect(() => {
 		consultaAnexo()
@@ -138,11 +196,74 @@ export default function Anexos() {
 	}
 
 	const handleNombre = () => {
-		setOpenNombre(!openNombre)
+		setOpenNombre(true)
 	}
 
-	const handleClose=()=>{
+	const handleCloseNombre = () => {
 		setOpenNombre(false)
+	}
+
+	const onChange = (e) => {
+		setFiltro({
+			...filtro,
+			[e.target.name]: e.target.value
+		})
+	}
+
+	const Enter = (e) => {
+		if (e.keyCode === 13) {
+			consultaAnexo()
+			conteo()
+			setOpenNombre(false)
+			setOpenId(false)
+			setOpenAlias(false)
+			setOpenNDocumento(false)
+			setOpentdocumento(false)
+		}
+	}
+
+	const handleId = () => {
+		setOpenId(true)
+	}
+
+	const handleCloseId = () => {
+		setOpenId(false)
+	}
+
+	const handleAlias = () => {
+		setOpenAlias(true)
+	}
+
+	const handleCloseAlias = () => {
+		setOpenAlias(false)
+	}
+
+	const handleNDocumento = () => {
+		setOpenNDocumento(true)
+	}
+
+	const handleCloseNDocumento = () => {
+		setOpenNDocumento(false)
+	}
+
+	const handletdocumento = () => {
+		setOpentdocumento(true)
+	}
+
+	const handleClosetdocumento = () => {
+		setOpentdocumento(false)
+	}
+
+	const eliminarAnexo = (id_anexo) => {
+		setOpenMensaje(true);
+	};
+
+	const handleCloseMensaje = (event, reason) => {
+		if (reason === 'clickaway') {
+			return;
+		}
+
+		setOpenMensaje(false);
 	}
 
 	return (
@@ -150,41 +271,188 @@ export default function Anexos() {
 			<CssBaseline />
 			<Slide direction="left" in={true} mountOnEnter unmountOnExit timeout={1000}>
 				<Paper elevation={4} className={classes.root}>
+					<Snackbar
+						anchorOrigin={{
+							vertical: 'bottom',
+							horizontal: 'left',
+						}}
+						open={openMensaje}
+						autoHideDuration={6000}
+						onClose={handleCloseMensaje}
+					>
+						<MySnackbarContentWrapper
+							onClose={handleCloseMensaje}
+							variant="success"
+							message="Este es un mensaje de error!"
+						/>
+					</Snackbar>
 					<Modal
 						aria-labelledby='transition-modal-title'
 						aria-describedby="transition-modal-description"
 						className={classes.modal}
 						open={openNombre}
-						onClose={handleClose}
+						onClose={handleCloseNombre}
 						closeAfterTransition
 						BackdropComponent={Backdrop}
 						BackdropProps={{ timeout: 500 }}>
 						<Fade in={openNombre}>
 							<div className={classes.estiloModal}>
-								<h2 id="transition-modal-title">Buscar</h2>
-								<p id="transition-modal-description">por nombre</p>
+								<Typography variant="h6">
+									Buscar
+								</Typography>
+								<TextField
+									variant="outlined"
+									margin="normal"
+									required
+									fullWidth
+									id="nm_anexo"
+									label="Nombre de Anexo"
+									name="nm_anexo"
+									autoComplete="nm_anexo"
+									autoFocus
+									onChange={onChange.bind()}
+									onKeyDown={Enter.bind()}
+									value={filtro.nm_anexo}
+								/>
+							</div>
+						</Fade>
+					</Modal>
+					<Modal
+						aria-labelledby='transition-modal-title'
+						aria-describedby="transition-modal-description"
+						className={classes.modal}
+						open={openId}
+						onClose={handleCloseId}
+						closeAfterTransition
+						BackdropComponent={Backdrop}
+						BackdropProps={{ timeout: 500 }}>
+						<Fade in={openId}>
+							<div className={classes.estiloModal}>
+								<Typography variant="h6">
+									Buscar
+								</Typography>
+								<TextField
+									variant="outlined"
+									margin="normal"
+									required
+									fullWidth
+									id="id_anexo"
+									label="Id de Anexo"
+									name="id_anexo"
+									autoComplete="id_anexo"
+									autoFocus
+									onChange={onChange.bind()}
+									onKeyDown={Enter.bind()}
+									value={filtro.id_anexo}
+								/>
+							</div>
+						</Fade>
+					</Modal>
+					<Modal
+						aria-labelledby='transition-modal-title'
+						aria-describedby="transition-modal-description"
+						className={classes.modal}
+						open={openAlias}
+						onClose={handleCloseAlias}
+						closeAfterTransition
+						BackdropComponent={Backdrop}
+						BackdropProps={{ timeout: 500 }}>
+						<Fade in={openAlias}>
+							<div className={classes.estiloModal}>
+								<Typography variant="h6">
+									Buscar
+								</Typography>
+								<TextField
+									variant="outlined"
+									margin="normal"
+									required
+									fullWidth
+									id="nm_alias"
+									label="Alias de Anexo"
+									name="nm_alias"
+									autoComplete="nm_alias"
+									autoFocus
+									onChange={onChange.bind()}
+									onKeyDown={Enter.bind()}
+									value={filtro.nm_alias}
+								/>
+							</div>
+						</Fade>
+					</Modal>
+					<Modal
+						aria-labelledby='transition-modal-title'
+						aria-describedby="transition-modal-description"
+						className={classes.modal}
+						open={openNDocumento}
+						onClose={handleCloseNDocumento}
+						closeAfterTransition
+						BackdropComponent={Backdrop}
+						BackdropProps={{ timeout: 500 }}>
+						<Fade in={openNDocumento}>
+							<div className={classes.estiloModal}>
+								<Typography variant="h6">
+									Buscar
+								</Typography>
+								<TextField
+									variant="outlined"
+									margin="normal"
+									required
+									fullWidth
+									id="ruc"
+									label="N° Documento"
+									name="ruc"
+									autoComplete="ruc"
+									autoFocus
+									onChange={onChange.bind()}
+									onKeyDown={Enter.bind()}
+									value={filtro.ruc}
+								/>
+							</div>
+						</Fade>
+					</Modal>
+					<Modal
+						aria-labelledby='transition-modal-title'
+						aria-describedby="transition-modal-description"
+						className={classes.modal}
+						open={opentdocumento}
+						onClose={handleClosetdocumento}
+						closeAfterTransition
+						BackdropComponent={Backdrop}
+						BackdropProps={{ timeout: 500 }}>
+						<Fade in={opentdocumento}>
+							<div className={classes.estiloModal}>
+								<Typography variant="h6">
+									Buscar
+								</Typography>
+								<TextField
+									variant="outlined"
+									margin="normal"
+									required
+									fullWidth
+									id="tdocumento"
+									label="Tipo de Documento"
+									name="tdocumento"
+									autoComplete="tdocumento"
+									autoFocus
+									onChange={onChange.bind()}
+									onKeyDown={Enter.bind()}
+									value={filtro.tdocumento}
+								/>
 							</div>
 						</Fade>
 					</Modal>
 					<div className={classes.tableWrapper}>
-						<Table stickyHeader aria-label="sticky table">
+						<Table stickyHeader aria-label="sticky table" size="small">
 							<TableHead>
 								<TableRow>
-									{/* {columns.map(column => (
-										<StyledTableCell
-											key={column.id}
-											align={column.align}
-											style={{ minWidth: column.minWidth }}
-											onClick={handleModal}>
-											{column.label}
-										</StyledTableCell>
-									))} */}
-									<StyledTableCell key={1}>ID</StyledTableCell>
-									<StyledTableCell key={2} onClick={handleNombre}>Nombre</StyledTableCell>
-									<StyledTableCell key={3} align='right'>Alias</StyledTableCell>
-									<StyledTableCell key={4} align='right'>Tipo de Documento</StyledTableCell>
-									<StyledTableCell key={5} align='right'>N° Documento</StyledTableCell>
-									<StyledTableCell key={6} align='right'>Estado</StyledTableCell>
+									<StyledTableCell key='1' onClick={handleId}>ID</StyledTableCell>
+									<StyledTableCell key='2' onClick={handleNombre}>Nombre</StyledTableCell>
+									<StyledTableCell key='3' align='right' onClick={handleAlias}>Alias</StyledTableCell>
+									<StyledTableCell key='4' align='right' onClick={handletdocumento}>Tipo de Documento</StyledTableCell>
+									<StyledTableCell key='5' align='right' onClick={handleNDocumento}>N° Documento</StyledTableCell>
+									<StyledTableCell key='6' align='right'>Estado</StyledTableCell>
+									<StyledTableCell key='7' align='center'>Editar</StyledTableCell>
+									<StyledTableCell key='8' align='center'>Eliminar</StyledTableCell>
 								</TableRow>
 							</TableHead>
 							<TableBody>
@@ -199,23 +467,34 @@ export default function Anexos() {
 													</TableCell>
 												);
 											})}
+											<TableCell align='center'>
+												<IconButton onClick={() => alert('editar Anexo N°' + row.id_anexo)}>
+													<EditIcon />
+												</IconButton>
+											</TableCell>
+											<TableCell align='center'>
+												<IconButton onClick={() => eliminarAnexo(row.id_anexo)}>
+													<DeleteForeverIcon />
+												</IconButton>
+											</TableCell>
 										</TableRow>
 									);
 								})}
+								<TableRow>
+									<TablePagination
+										rowsPerPageOptions={[10, 25, 50]}
+										count={total}
+										rowsPerPage={filtro.rows}
+										page={filtro.page - 1}
+										onChangePage={handleChangePage}
+										onChangeRowsPerPage={handleChangeRowsPerPage}
+										labelRowsPerPage={'Items por página'}
+										labelDisplayedRows={({ from, to, count }) => `${from}-${to} de ${count}`}
+									/>
+								</TableRow>
 							</TableBody>
 						</Table>
 					</div>
-					<TablePagination
-						rowsPerPageOptions={[10, 25, 50]}
-						component="TableCell"
-						count={total}
-						rowsPerPage={filtro.rows}
-						page={0}
-						onChangePage={handleChangePage}
-						onChangeRowsPerPage={handleChangeRowsPerPage}
-						labelRowsPerPage={'Items por página'}
-						labelDisplayedRows={({ from, to, count }) => `${from}-${to} de ${count}`}
-					/>
 				</Paper>
 			</Slide>
 		</React.Fragment>
