@@ -18,6 +18,7 @@ import { red } from '@material-ui/core/colors';
 import clsx from 'clsx';
 import CloseIcon from '@material-ui/icons/Close';
 import IconButton from '@material-ui/core/IconButton';
+import Grid from '@material-ui/core/Grid';
 
 const variantIcon = {
 	success: ErrorIcon
@@ -84,10 +85,6 @@ function Login() {
 			margin: theme.spacing(1),
 			backgroundColor: theme.palette.primary.main,
 		},
-		form: {
-			width: '100%',
-			marginTop: theme.spacing(1),
-		},
 		submit: {
 			margin: theme.spacing(3, 0, 2),
 		},
@@ -104,6 +101,18 @@ function Login() {
 		message: {
 			display: 'flex',
 			alignItems: 'center',
+		},
+		main: {
+			backgroundColor: 'rgba(255, 255, 255, 0.750)',
+			height: '60%',
+			marginTop: theme.spacing(10)
+		},
+		root: {
+			backgroundImage: 'url(https://i.imgur.com/5opar7w.jpg)',
+			backgroundRepeat: 'no-repeat',
+			backgroundSize: 'cover',
+			backgroundPosition: 'center',
+			height: '100vh'
 		}
 	}));
 
@@ -151,65 +160,67 @@ function Login() {
 	}
 
 	return (
-		<Container component="main" maxWidth="xs">
-			<CssBaseline />
-			<Snackbar
-				anchorOrigin={{
-					vertical: 'bottom',
-					horizontal: 'left',
-				}}
-				open={openMensaje}
-				autoHideDuration={6000}
-				onClose={handleCloseMensaje}>
-				<MySnackbarContentWrapper
-					onClose={handleCloseMensaje}
-					variant="success"
-					message="Nickname o contraseña incorrectos!" />
-			</Snackbar>
-			<div className={classes.paper}>
-				<Avatar className={classes.avatar}>
-					<LockOutlinedIcon />
-				</Avatar>
-				<Typography component="h1" variant="h5">
-					Login
+		<Grid container component="main" className={classes.root}>
+			<Container maxWidth="xs" className={classes.main}>
+				<CssBaseline />
+				<Snackbar
+					anchorOrigin={{
+						vertical: 'bottom',
+						horizontal: 'left',
+					}}
+					open={openMensaje}
+					autoHideDuration={6000}
+					onClose={handleCloseMensaje}>
+					<MySnackbarContentWrapper
+						onClose={handleCloseMensaje}
+						variant="success"
+						message="Nickname o contraseña incorrectos!" />
+				</Snackbar>
+				<div className={classes.paper}>
+					<Avatar className={classes.avatar}>
+						<LockOutlinedIcon />
+					</Avatar>
+					<Typography component="h1" variant="h5">
+						New Transport S.A.
         		</Typography>
 
-				<TextField
-					variant="outlined"
-					margin="normal"
-					required
-					fullWidth
-					id="nickname"
-					label="Nickname"
-					name="nickname"
-					autoComplete="nickname"
-					autoFocus
-					onChange={onChange.bind()} />
-				<TextField
-					variant="outlined"
-					margin="normal"
-					required
-					fullWidth
-					name="password"
-					label="Password"
-					type="password"
-					id="password"
-					autoComplete="current-password"
-					onChange={onChange.bind()}
-					onKeyDown={Enter.bind()} />
-				<Button
-					fullWidth
-					variant="contained"
-					color="primary"
-					className={classes.submit}
-					onClick={() => Ingresar()}>
-					Ingresar
+					<TextField
+						variant="outlined"
+						margin="normal"
+						required
+						fullWidth
+						id="nickname"
+						label="Nickname"
+						name="nickname"
+						autoComplete="nickname"
+						autoFocus
+						onChange={onChange.bind()} />
+					<TextField
+						variant="outlined"
+						margin="normal"
+						required
+						fullWidth
+						name="password"
+						label="Password"
+						type="password"
+						id="password"
+						autoComplete="current-password"
+						onChange={onChange.bind()}
+						onKeyDown={Enter.bind()} />
+					<Button
+						fullWidth
+						variant="contained"
+						color="primary"
+						className={classes.submit}
+						onClick={() => Ingresar()}>
+						Ingresar
           		</Button>
-			</div>
-			<Box mt={8}>
-				<Copyright />
-			</Box>
-		</Container>
+				</div>
+				<Box mt={8}>
+					<Copyright />
+				</Box>
+			</Container>
+		</Grid>
 	);
 }
 

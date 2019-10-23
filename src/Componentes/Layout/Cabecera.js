@@ -105,8 +105,8 @@ export default function MenuAppBar() {
 								horizontal: 'right',
 							}}
 							open={open}
-							onClose={() => setAnchorEl(null)}
-						>
+							onClose={() => setAnchorEl(null)}>
+							<MenuItem disabled><em>Samuel Bustamante</em></MenuItem>
 							<MenuItem onClick={handleClose}>Cerrar Sesión</MenuItem>
 						</Menu>
 					</div>

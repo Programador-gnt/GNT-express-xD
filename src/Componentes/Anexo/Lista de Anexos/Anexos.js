@@ -24,6 +24,7 @@ import ErrorIcon from '@material-ui/icons/Error';
 import { red } from '@material-ui/core/colors';
 import clsx from 'clsx';
 import CloseIcon from '@material-ui/icons/Close';
+import { Link } from 'react-router-dom'
 
 const variantIcon = {
 	success: ErrorIcon
@@ -165,6 +166,7 @@ export default function Anexos() {
 		sortorder: "desc"
 	})
 	const [openMensaje, setOpenMensaje] = React.useState(false);
+	const [mensaje, setMensaje] = React.useState([])
 
 	React.useEffect(() => {
 		consultaAnexo()
@@ -255,7 +257,21 @@ export default function Anexos() {
 	}
 
 	const eliminarAnexo = (id_anexo) => {
-		setOpenMensaje(true);
+		consumeWS('POST', 'api/anexo/eliminar', '', `?id_anexo=${id_anexo}`)
+			.then(result => {
+				setMensaje(result);
+				if (mensaje.hasOwnProperty('message')) {
+					setOpenMensaje(true)
+				} else {
+					if (mensaje.error === "") {
+						setOpenMensaje(false)
+					} else {
+						setOpenMensaje(true)
+					}
+				}
+				conteo()
+				consultaAnexo()
+			});
 	};
 
 	const handleCloseMensaje = (event, reason) => {
@@ -283,7 +299,7 @@ export default function Anexos() {
 						<MySnackbarContentWrapper
 							onClose={handleCloseMensaje}
 							variant="success"
-							message="Este es un mensaje de error!"
+							message={mensaje.error}
 						/>
 					</Snackbar>
 					<Modal
@@ -468,9 +484,11 @@ export default function Anexos() {
 												);
 											})}
 											<TableCell align='center'>
-												<IconButton onClick={() => alert('editar Anexo N°' + row.id_anexo)}>
-													<EditIcon />
-												</IconButton>
+												<Link to={`/smnuAnexo/editar?id_anexo=${row.id_anexo}`}>
+													<IconButton>
+														<EditIcon />
+													</IconButton>
+												</Link>
 											</TableCell>
 											<TableCell align='center'>
 												<IconButton onClick={() => eliminarAnexo(row.id_anexo)}>
