@@ -4,23 +4,24 @@ import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
-import AccountCircle from '@material-ui/icons/AccountCircle';
+import Avatar from '@material-ui/core/Avatar';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 import { Redirect } from 'react-router-dom';
 import MenuMobile from './MenuMobile';
 import Opacidad from './FondoOpacidad';
-import HamburgerMenu from './Hamburg'
+import HamburgerMenu from './Hamburg';
+import consumeWS from '../Config/WebService';
 
 const useStyles = makeStyles(theme => ({
 	root: {
-		flexGrow: 1,
+		flexGrow: 1
 	},
 	menuButton: {
-		marginRight: theme.spacing(2),
+		marginRight: theme.spacing(2)
 	},
 	title: {
-		flexGrow: 1,
+		flexGrow: 1
 	}
 }));
 
@@ -30,7 +31,19 @@ export default function MenuAppBar() {
 	const [salir, setSalir] = React.useState(false)
 	const [showMenu, setShowMenu] = React.useState(false)
 	const [abrir, setAbrir] = React.useState(false)
+	const [perfil, setPerfil] = React.useState({})
 	const open = Boolean(anchorEl);
+
+	React.useEffect(() => {
+		consultarPerfil()
+	}, []);
+
+	const consultarPerfil = () => {
+		consumeWS('GET', 'api/usuario/obtener', '', '')
+			.then(result => {
+				setPerfil(result)
+			});
+	}
 
 	const handleMenu = event => {
 		setAnchorEl(event.currentTarget);
@@ -90,7 +103,7 @@ export default function MenuAppBar() {
 							onClick={handleMenu}
 							color="inherit"
 						>
-							<AccountCircle />
+							<Avatar alt="..." src={perfil.nombre==='Samuel Bustamante'?'https://i.imgur.com/qSZaqys.jpg':perfil.foto}/>
 						</IconButton>
 						<Menu
 							id="menu-appbar"
@@ -106,7 +119,7 @@ export default function MenuAppBar() {
 							}}
 							open={open}
 							onClose={() => setAnchorEl(null)}>
-							<MenuItem disabled><em>Samuel Bustamante</em></MenuItem>
+							<MenuItem disabled><em>{perfil.nombre}</em></MenuItem>
 							<MenuItem onClick={handleClose}>Cerrar Sesión</MenuItem>
 						</Menu>
 					</div>
