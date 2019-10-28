@@ -22,6 +22,16 @@ import Fab from '@material-ui/core/Fab';
 import Fade from '@material-ui/core/Fade';
 import Modal from '@material-ui/core/Modal';
 import Backdrop from '@material-ui/core/Backdrop';
+import Snackbar from '@material-ui/core/Snackbar';
+import SnackbarContent from '@material-ui/core/SnackbarContent';
+import ErrorIcon from '@material-ui/icons/Error';
+import { red } from '@material-ui/core/colors';
+import clsx from 'clsx';
+import CloseIcon from '@material-ui/icons/Close';
+
+const variantIcon = {
+	success: ErrorIcon
+}
 
 const useStyles = makeStyles(theme => ({
 	layout: {
@@ -66,6 +76,20 @@ const useStyles = makeStyles(theme => ({
 		border: '2px solid #000',
 		boxShadow: theme.shadows[5],
 		padding: theme.spacing(2, 4, 3)
+	},
+	success: {
+		backgroundColor: red[600],
+	},
+	iconVariant: {
+		opacity: 0.9,
+		marginRight: theme.spacing(1),
+	},
+	icon: {
+		fontSize: 20,
+	},
+	message: {
+		display: 'flex',
+		alignItems: 'center',
 	}
 }));
 
@@ -80,6 +104,30 @@ const StyledTableCell = withStyles(theme => ({
 	},
 }))(TableCell);
 
+function MySnackbarContentWrapper(props) {
+	const classes = useStyles();
+	const { className, message, onClose, variant, ...other } = props;
+	const Icon = variantIcon[variant];
+
+	return (
+		<SnackbarContent
+			className={clsx(classes[variant], className)}
+			aria-describedby="client-snackbar"
+			message={
+				<span id="client-snackbar" className={classes.message}>
+					<Icon className={clsx(classes.icon, classes.iconVariant)} />
+					{message}
+				</span>
+			}
+			action={[
+				<IconButton key="close" aria-label="close" color="inherit" onClick={onClose}>
+					<CloseIcon className={classes.icon} />
+				</IconButton>,
+			]}
+			{...other}
+		/>
+	);
+}
 
 export default function EditarAnexo() {
 	const classes = useStyles();
@@ -92,6 +140,7 @@ export default function EditarAnexo() {
 	const [categoria, setCategoria] = React.useState({})
 	const [listaAnexoMaestro, setListaAnexoMaestro] = React.useState([])
 	const [mensaje, setMensaje] = React.useState([])
+	const [openMensaje, setOpenMensaje] = React.useState(false);
 
 	React.useEffect(() => {
 		id = recibirAnexo().id_anexo
@@ -188,19 +237,11 @@ export default function EditarAnexo() {
 			.then(result => {
 				setMensaje(result)
 				setAbrir(false)
-				// if (this.state.mensaje.error === "") {
-				// 	Alert.success('Guardado con éxito', {
-				// 		position: 'bottom-right',
-				// 		effect: 'bouncyflip',
-				// 		beep: 'http://s-alert-demo.meteorapp.com/beep.mp3'
-				// 	})
-				// } else {
-				// 	Alert.error(this.state.mensaje.error, {
-				// 		position: 'bottom-right',
-				// 		effect: 'bouncyflip',
-				// 		beep: 'http://s-alert-demo.meteorapp.com/beep.mp3'
-				// 	})
-				// }
+				if (mensaje.error === "") {
+					setOpenMensaje(false)
+				} else {
+					setOpenMensaje(true)
+				}
 				consultarExamine()
 			});
 	}
@@ -210,19 +251,11 @@ export default function EditarAnexo() {
 		consumeWS('POST', 'api/anexomaestro/eliminar', '', `?id_anexo=${id}&id_tanexo=${id_tanexo}`)
 			.then(result => {
 				setMensaje(result)
-				// 	if(this.state.mensaje.error===""){
-				// 		Alert.success('Eliminado con Éxito', {
-				// 			position: 'bottom-right',
-				// 			effect: 'bouncyflip',
-				// 			beep: 'http://s-alert-demo.meteorapp.com/beep.mp3'
-				// 		})
-				// 	}else{
-				// 	Alert.error(this.state.mensaje.error, {
-				// 		position: 'bottom-right',
-				// 		effect: 'bouncyflip',
-				// 		beep: 'http://s-alert-demo.meteorapp.com/beep.mp3'
-				// 	})
-				// }
+					if(mensaje.error===""){
+						setOpenMensaje(false)
+					}else{
+					setOpenMensaje(true)
+				}
 				consultarExamine()
 			});
 	}
@@ -232,24 +265,25 @@ export default function EditarAnexo() {
 		consumeWS('POST', 'api/anexo/modificar', anexo, '')
 			.then(result => {
 				setMensaje(result)
-				// if (this.state.mensaje.hasOwnProperty('error')) {
-				// 	Alert.success('Editado con Éxito!', {
-				// 		position: 'bottom-right',
-				// 		effect: 'stackslide'
-				// 	})
-				// } else {
-				// 	let mensajes = Object.keys(this.state.mensaje)
-				// 	if (mensajes.length > 0) {
-				// 		for (let i = 0; i < mensajes.length; i++) {
-				// 			Alert.error(this.state.mensaje[mensajes[i]][0], {
-				// 				position: 'bottom-right',
-				// 				effect: 'stackslide',
-				// 				beep: 'http://s-alert-demo.meteorapp.com/beep.mp3'
-				// 			})
-				// 		}
-				// 	}
-				// }
+				if (mensaje.hasOwnProperty('error')) {
+					setOpenMensaje(false)
+				} else {
+					let mensajes = Object.keys(mensaje)
+					if (mensajes.length > 0) {
+						for (let i = 0; i < mensajes.length; i++) {
+							console.log(mensaje[mensajes[i]][0])
+						}
+					}
+				}
 			})
+	}
+
+	const handleCloseMensaje = (event, reason) => {
+		if (reason === 'clickaway') {
+			return;
+		}
+
+		setOpenMensaje(false);
 	}
 
 	return (
@@ -257,6 +291,21 @@ export default function EditarAnexo() {
 			<CssBaseline />
 			<main className={classes.layout}>
 				<Paper className={classes.paper}>
+					<Snackbar
+						anchorOrigin={{
+							vertical: 'bottom',
+							horizontal: 'left',
+						}}
+						open={openMensaje}
+						autoHideDuration={6000}
+						onClose={handleCloseMensaje}
+					>
+						<MySnackbarContentWrapper
+							onClose={handleCloseMensaje}
+							variant="success"
+							message={mensaje.error}
+						/>
+					</Snackbar>
 					<Typography component="h1" variant="h4" align="center">
 						Editar Anexo
           			</Typography>
@@ -609,7 +658,7 @@ export default function EditarAnexo() {
 									<Button
 										variant="contained"
 										color="primary"
-										onClick={()=>guardar()}
+										onClick={() => guardar()}
 										className={classes.button}>
 										Guardar
 										</Button>
