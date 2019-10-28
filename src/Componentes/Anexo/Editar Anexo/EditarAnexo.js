@@ -28,6 +28,7 @@ import ErrorIcon from '@material-ui/icons/Error';
 import { red } from '@material-ui/core/colors';
 import clsx from 'clsx';
 import CloseIcon from '@material-ui/icons/Close';
+import SaveIcon from '@material-ui/icons/Save';
 
 const variantIcon = {
 	success: ErrorIcon
@@ -90,6 +91,11 @@ const useStyles = makeStyles(theme => ({
 	message: {
 		display: 'flex',
 		alignItems: 'center',
+	},
+	fab: {
+		position: 'fixed',
+		bottom: theme.spacing(8),
+		right: theme.spacing(2)
 	}
 }));
 
@@ -251,9 +257,9 @@ export default function EditarAnexo() {
 		consumeWS('POST', 'api/anexomaestro/eliminar', '', `?id_anexo=${id}&id_tanexo=${id_tanexo}`)
 			.then(result => {
 				setMensaje(result)
-					if(mensaje.error===""){
-						setOpenMensaje(false)
-					}else{
+				if (mensaje.error === "") {
+					setOpenMensaje(false)
+				} else {
 					setOpenMensaje(true)
 				}
 				consultarExamine()
@@ -290,6 +296,9 @@ export default function EditarAnexo() {
 		<React.Fragment>
 			<CssBaseline />
 			<main className={classes.layout}>
+				<Fab color="primary" aria-label="add" className={classes.fab} onClick={()=>guardar()} title='Actualizar anexo'>
+					<SaveIcon />
+				</Fab>
 				<Paper className={classes.paper}>
 					<Snackbar
 						anchorOrigin={{
@@ -630,7 +639,7 @@ export default function EditarAnexo() {
 								</Fab>
 							</Grid>
 							<Grid item xs={12}>
-								<Table stickyHeader aria-label="sticky table" size="small">
+								<Table stickyHeader size="small">
 									<TableHead>
 										<TableRow>
 											<StyledTableCell key={0}>Código</StyledTableCell>
@@ -653,17 +662,6 @@ export default function EditarAnexo() {
 									</TableBody>
 								</Table>
 							</Grid>
-							<React.Fragment>
-								<div className={classes.buttons}>
-									<Button
-										variant="contained"
-										color="primary"
-										onClick={() => guardar()}
-										className={classes.button}>
-										Guardar
-										</Button>
-								</div>
-							</React.Fragment>
 						</Grid>
 					</React.Fragment>
 				</Paper>
