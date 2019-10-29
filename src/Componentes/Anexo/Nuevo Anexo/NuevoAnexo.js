@@ -1,8 +1,7 @@
 import React from 'react';
-import { withStyles, makeStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Paper from '@material-ui/core/Paper';
-import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
@@ -10,17 +9,7 @@ import Checkbox from '@material-ui/core/Checkbox';
 import Grid from '@material-ui/core/Grid';
 import consumeWS from '../../Config/WebService';
 import MenuItem from '@material-ui/core/MenuItem';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
 import IconButton from '@material-ui/core/IconButton';
-import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
-import AddIcon from '@material-ui/icons/Add';
-import Fab from '@material-ui/core/Fab';
-import Fade from '@material-ui/core/Fade';
-import Modal from '@material-ui/core/Modal';
 import Backdrop from '@material-ui/core/Backdrop';
 import Snackbar from '@material-ui/core/Snackbar';
 import SnackbarContent from '@material-ui/core/SnackbarContent';
@@ -33,7 +22,6 @@ import SpeedDial from '@material-ui/lab/SpeedDial';
 import SpeedDialIcon from '@material-ui/lab/SpeedDialIcon';
 import SpeedDialAction from '@material-ui/lab/SpeedDialAction';
 import CancelIcon from '@material-ui/icons/Cancel';
-import AddCircleIcon from '@material-ui/icons/AddCircle';
 import { Redirect } from 'react-router-dom'
 
 const variantIcon = {
@@ -111,21 +99,9 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const actions = [
-	{ name: 'Actualizar' },
-	{ name: 'Cancelar' },
-	{ name: 'Nuevo' }
+	{ name: 'Guardar' },
+	{ name: 'Cancelar' }
 ];
-
-const StyledTableCell = withStyles(theme => ({
-	head: {
-		backgroundColor: '#4a48b2',
-		color: theme.palette.common.white,
-		cursor: 'pointer'
-	},
-	body: {
-		fontSize: 14,
-	},
-}))(TableCell);
 
 function MySnackbarContentWrapper(props) {
 	const classes = useStyles();
@@ -152,54 +128,32 @@ function MySnackbarContentWrapper(props) {
 	);
 }
 
-export default function EditarAnexo() {
+export default function NuevoAnexo() {
 	const classes = useStyles();
-	var id
-	const [anexo, setAnexo] = React.useState({})
+	const [anexo, setAnexo] = React.useState({
+		estado: 1,
+		id_empresa: 1,
+		id_tdocumento: "00",
+		id_pais: "24",
+		id_anexo: 0
+	})
 	const [tdocumento, setTdocumento] = React.useState([])
 	const [pais, setPais] = React.useState([])
-	const [examine, setExamine] = React.useState([])
-	const [abrir, setAbrir] = React.useState(false)
-	const [categoria, setCategoria] = React.useState({})
-	const [listaAnexoMaestro, setListaAnexoMaestro] = React.useState([])
 	const [mensaje, setMensaje] = React.useState([])
 	const [openMensaje, setOpenMensaje] = React.useState(false);
 	const [open, setOpen] = React.useState(false);
 	const [cancel, setCancel] = React.useState(false)
 
 	React.useEffect(() => {
-		id = recibirAnexo().id_anexo
-		consultarApi()
 		consultarDocumento()
 		consultarPais()
-		consultarExamine()
-		consultarListaAnexoMaestro()
 	}, []);
-
-	const recibirAnexo = () => {
-		let hash = window.location.hash;
-		let qString = hash.split('?')[1];
-		let qStringArray = qString.split('&');
-		let qStringObject = {};
-		for (let i = 0; i < qStringArray.length; i++) {
-			let ok = qStringArray[i].split('=');
-			qStringObject[ok[0]] = ok[1]
-		}
-		return qStringObject;
-	}
 
 	const onChange = (e) => {
 		setAnexo({
 			...anexo,
 			[e.target.name]: e.target.value
 		})
-	}
-
-	const consultarApi = () => {
-		consumeWS('GET', 'api/anexo/obtener', '', `?id_anexo=${id}`)
-			.then(result => {
-				setAnexo(result)
-			});
 	}
 
 	const consultarDocumento = () => {
@@ -223,82 +177,29 @@ export default function EditarAnexo() {
 		})
 	}
 
-	const consultarExamine = () => {
-		let id = recibirAnexo().id_anexo
-		consumeWS('GET', 'api/anexomaestro/examinar', '', `?id_anexo=${id}`)
-			.then(result => {
-				setExamine(result)
-			});
-	}
-
-	const abrirModal = () => {
-		setAbrir(true)
-		setCategoria({
-			id_tanexo: 1,
-			id_anexo: anexo.id_anexo
-		})
-	}
-
-	const handleClose = () => {
-		setAbrir(false)
-	}
-
-	const onChangeCategoria = (e) => {
-		setCategoria({
-			...categoria,
-			[e.target.name]: e.target.value
-		})
-	}
-
-	const consultarListaAnexoMaestro = () => {
-		consumeWS('GET', 'api/anexotipo/listar', '', '')
-			.then(result => {
-				setListaAnexoMaestro(result)
-			})
-	}
-
-	const guardarCategoria = async () => {
-		consumeWS('POST', 'api/anexomaestro/insertar', categoria, '')
-			.then(result => {
-				setMensaje(result)
-				setAbrir(false)
-				if (mensaje.error === "") {
-					setOpenMensaje(false)
-				} else {
-					setOpenMensaje(true)
-				}
-				consultarExamine()
-			});
-	}
-
-	const eliminar = (id_tanexo) => {
-		let id = recibirAnexo().id_anexo
-		consumeWS('POST', 'api/anexomaestro/eliminar', '', `?id_anexo=${id}&id_tanexo=${id_tanexo}`)
-			.then(result => {
-				setMensaje(result)
-				if (mensaje.error === "") {
-					setOpenMensaje(false)
-				} else {
-					setOpenMensaje(true)
-				}
-				consultarExamine()
-			});
-	}
-
 	const guardar = () => {
-		consumeWS('POST', 'api/anexo/modificar', anexo, '')
-			.then(result => {
+		consumeWS('POST', 'api/anexo/insertar', anexo, '')
+		.then(result => {
 				setMensaje(result)
-				if (mensaje.hasOwnProperty('error')) {
-					setOpenMensaje(false)
-				} else {
-					let mensajes = Object.keys(mensaje)
-					if (mensajes.length > 0) {
-						for (let i = 0; i < mensajes.length; i++) {
-							console.log(mensaje[mensajes[i]][0])
-						}
+				if(mensaje.hasOwnProperty('error')){
+				if(mensaje.salida > 0){
+				alert('creado con ID ' +mensaje.salida)
+				setAnexo({
+					...anexo,
+					id_anexo: mensaje.salida
+				})
+				
+			}else{
+				
+			}
+			}else{
+				let mensajes = Object.keys(mensaje)
+				if(mensajes.length>0){
+					for (let i = 0; i < mensajes.length; i++) {
+						// alert(mensaje[mensajes[i]][0])
 					}
 				}
+			}
 			})
 	}
 
@@ -318,18 +219,18 @@ export default function EditarAnexo() {
 		setOpen(false);
 	};
 
-	const irAtras=()=>{
+	const irAtras = () => {
 		setCancel(true)
 	}
 
-	if(cancel===true){
-		return (<Redirect to='/smnuAnexo'/>)
+	if (cancel === true) {
+		return (<Redirect to='/smnuAnexo' />)
 	}
 
 	return (
 		<React.Fragment>
 			<CssBaseline />
-			<Backdrop open={open} className={classes.back}/>
+			<Backdrop open={open} className={classes.back} />
 			<SpeedDial
 				ariaLabel="SpeedDial tooltip example"
 				className={classes.speedDial}
@@ -341,9 +242,9 @@ export default function EditarAnexo() {
 				{actions.map(action => (
 					<SpeedDialAction
 						key={action.name}
-						icon={action.name==='Actualizar'?<SaveIcon/>:action.name==='Cancelar'?<CancelIcon/>:action.name==='Nuevo'?<AddCircleIcon/>:''}
+						icon={action.name === 'Guardar' ? <SaveIcon /> : action.name === 'Cancelar' ? <CancelIcon /> :''}
 						tooltipTitle={action.name}
-						onClick={action.name === 'Actualizar' ? () => guardar() : action.name==='Cancelar' ? ()=>irAtras():action.name==='Nuevo'? ()=>alert('nuevo anexo'):''}
+						onClick={action.name === 'Guardar' ? () => guardar() : action.name === 'Cancelar' ? () => irAtras() :''}
 					/>
 				))}
 			</SpeedDial>
@@ -365,7 +266,7 @@ export default function EditarAnexo() {
 						/>
 					</Snackbar>
 					<Typography component="h1" variant="h4" align="center">
-						Editar Anexo
+						Crear Anexo
           			</Typography>
 					<React.Fragment>
 						<Grid container spacing={3}>
@@ -390,7 +291,6 @@ export default function EditarAnexo() {
 									name="codold"
 									fullWidth
 									autoComplete="codold"
-									value={anexo.codold}
 									disabled
 									onChange={onChange.bind()}
 									helperText='Código antiguo'
@@ -407,7 +307,8 @@ export default function EditarAnexo() {
 									onChange={onChange.bind()}
 									name='id_tdocumento'
 									helperText="Seleccione el tipo de documento"
-									margin="normal">
+									className={classes.campo}
+									margin='normal'>
 									{tdocumento.map(documento => (
 										<MenuItem key={documento.id_tdocumento} value={documento.id_tdocumento}>
 											{documento.alias}
@@ -422,9 +323,8 @@ export default function EditarAnexo() {
 									name="ruc"
 									fullWidth
 									autoComplete="ruc"
-									value={anexo.ruc}
+									label='Ruc'
 									onChange={onChange.bind()}
-									className={classes.campo}
 									helperText='Número de documento'
 								/>
 							</Grid>
@@ -436,8 +336,8 @@ export default function EditarAnexo() {
 									fullWidth
 									autoComplete='nm_anexo'
 									onChange={onChange.bind()}
-									helperText="Nombre o razón comercial"
-									value={anexo.nm_anexo}
+									label="Nombre o razón comercial"
+									helperText='Ingrese el nombre del anexo'
 									className={classes.campo}
 								/>
 							</Grid>
@@ -449,8 +349,8 @@ export default function EditarAnexo() {
 									fullWidth
 									autoComplete='nm_anlias'
 									onChange={onChange.bind()}
-									helperText="Nombre comercial o alias"
-									value={anexo.nm_alias}
+									label="Nombre comercial o alias"
+									helperText='Ingrese alias del anexo'
 									className={classes.campo}
 								/>
 							</Grid>
@@ -462,7 +362,8 @@ export default function EditarAnexo() {
 									autoComplete="billing address-line2"
 									onChange={onChange.bind()}
 									value={anexo.direccion}
-									helperText="Dirección"
+									label='Dirección'
+									helperText="Ingrese la dirección"
 									className={classes.campo}
 								/>
 							</Grid>
@@ -491,10 +392,9 @@ export default function EditarAnexo() {
 									name="departamento"
 									fullWidth
 									autoComplete="billing address-level2"
-									helperText='Departamento'
-									value={anexo.departamento}
+									helperText='Ingrese el departamento'
+									label='Departamento'
 									onChange={onChange.bind()}
-									className={classes.campo}
 								/>
 							</Grid>
 							<Grid item xs={12} sm={6}>
@@ -505,8 +405,8 @@ export default function EditarAnexo() {
 									fullWidth
 									autoComplete="billing address-level2"
 									onChange={onChange.bind()}
-									value={anexo.provincia}
-									helperText='Provincia'
+									helperText='Ingrese la provincia'
+									label='Provincia'
 									className={classes.campo}
 								/>
 							</Grid>
@@ -518,8 +418,8 @@ export default function EditarAnexo() {
 									fullWidth
 									autoComplete="billing address-level2"
 									onChage={onChange.bind()}
-									value={anexo.ciudad}
-									helperText='Ciudad'
+									helperText='Ingrese la ciudad'
+									label='Ciudad'
 									className={classes.campo}
 								/>
 							</Grid>
@@ -531,8 +431,8 @@ export default function EditarAnexo() {
 									fullWidth
 									autoComplete="billing address-level2"
 									onChange={onChange.bind()}
-									value={anexo.distrito}
-									helperText='Distrito'
+									helperText='Ingrese el distrito'
+									label='Distrito'
 									className={classes.campo}
 								/>
 							</Grid>
@@ -543,8 +443,8 @@ export default function EditarAnexo() {
 									name="fax"
 									fullWidth
 									onChange={onChange.bind()}
-									value={anexo.fax}
-									helperText='Fax'
+									helperText='Ingrese número de fax'
+									label='Fax'
 									className={classes.campo}
 								/>
 							</Grid>
@@ -555,8 +455,8 @@ export default function EditarAnexo() {
 									name="telef_1"
 									fullWidth
 									onChange={onChange.bind()}
-									value={anexo.telef_1}
-									helperText='Teléfono 1'
+									helperText='Ingrese teléfono 1'
+									label='Teléfono 1'
 									className={classes.campo}
 								/>
 							</Grid>
@@ -567,8 +467,8 @@ export default function EditarAnexo() {
 									name="telef_2"
 									fullWidth
 									onChange={onChange.bind()}
-									value={anexo.telef_2}
-									helperText='Teléfono 2'
+									helperText='Ingrese teléfono 2'
+									label='Teléfono 2'
 									className={classes.campo}
 								/>
 							</Grid>
@@ -579,16 +479,14 @@ export default function EditarAnexo() {
 									name="telef_3"
 									fullWidth
 									onChange={onChange.bind()}
-									value={anexo.telef_3}
-									helperText='Teléfono 3'
-									className={classes.campo}
+									helperText='Ingrese teléfono 3'
+									label='Teléfono 3'
 								/>
 							</Grid>
 							<Grid item xs={12} sm={6}>
 								<FormControlLabel
 									control={
 										<Checkbox
-											checked={anexo.nodomiciliado}
 											name='nodomiciliado'
 											onChange={handleChange.bind()}
 											value="nodomiciliado" />
@@ -606,8 +504,8 @@ export default function EditarAnexo() {
 									name="notas"
 									fullWidth
 									onChange={onChange.bind()}
-									value={anexo.notas}
-									helperText='Notas'
+									helperText='Ingrese una nota'
+									label='Notas'
 									className={classes.campo}
 								/>
 							</Grid>
@@ -625,91 +523,6 @@ export default function EditarAnexo() {
 									<MenuItem key={0} value={1}>Activo</MenuItem>
 									<MenuItem key={1} value={0}>Inactivo</MenuItem>
 								</TextField>
-							</Grid>
-							<Grid item xs={12} sm={10}>
-								<Typography>
-									Categoría Anexo
-          						</Typography>
-							</Grid>
-							<Modal
-								aria-labelledby='transition-modal-title'
-								aria-describedby="transition-modal-description"
-								className={classes.modal}
-								open={abrir}
-								onClose={handleClose}
-								closeAfterTransition
-								BackdropComponent={Backdrop}
-								BackdropProps={{ timeout: 500 }}>
-								<Fade in={abrir}>
-									<div className={classes.estiloModal}>
-										<Typography variant="h6">
-											Maestro asociado
-										</Typography>
-										<Grid item xs={12}>
-											<TextField
-												required
-												id="id_tanexo"
-												fullWidth
-												select
-												value={categoria.id_tanexo}
-												onChange={onChangeCategoria.bind()}
-												name='id_tanexo'
-												helperText="Seleccione el tipo de anexo"
-												margin="normal">
-												{listaAnexoMaestro.map(maestro => (
-													<MenuItem key={maestro.id_tanexo} value={maestro.id_tanexo}>
-														{maestro.nombre}
-													</MenuItem>
-												))}
-											</TextField>
-										</Grid>
-										<div className={classes.buttons}>
-											<Button
-												variant="contained"
-												color="primary"
-												onClick={() => guardarCategoria()}
-												className={classes.button}>
-												Guardar
-										</Button>
-											<Button
-												variant="contained"
-												onClick={() => setAbrir(false)}
-												color="secondary"
-												className={classes.button}>
-												Cancelar
-										</Button>
-										</div>
-									</div>
-								</Fade>
-							</Modal>
-							<Grid item xs={12} sm={2}>
-								<Fab size="small" color="primary" aria-label="add" onClick={() => abrirModal()}>
-									<AddIcon />
-								</Fab>
-							</Grid>
-							<Grid item xs={12}>
-								<Table stickyHeader size="small">
-									<TableHead>
-										<TableRow>
-											<StyledTableCell key={0}>Código</StyledTableCell>
-											<StyledTableCell key={1}>Nombre</StyledTableCell>
-											<StyledTableCell key={2} align='center'>Eliminar</StyledTableCell>
-										</TableRow>
-									</TableHead>
-									<TableBody>
-										{examine.map(exam => (
-											<TableRow hover key={exam.id_tanexo}>
-												<TableCell>{exam.id_tanexo}</TableCell>
-												<TableCell>{exam.nombre}</TableCell>
-												<TableCell align='center'>
-													<IconButton onClick={() => eliminar(exam.id_tanexo)}>
-														<DeleteForeverIcon />
-													</IconButton>
-												</TableCell>
-											</TableRow>
-										))}
-									</TableBody>
-								</Table>
 							</Grid>
 						</Grid>
 					</React.Fragment>

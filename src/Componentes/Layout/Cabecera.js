@@ -35,7 +35,11 @@ export default function MenuAppBar() {
 	const open = Boolean(anchorEl);
 
 	React.useEffect(() => {
-		consultarPerfil()
+		if (localStorage.getItem('Token') === null) {
+
+		} else {
+			consultarPerfil()
+		}
 	}, []);
 
 	const consultarPerfil = () => {
@@ -103,7 +107,7 @@ export default function MenuAppBar() {
 							onClick={handleMenu}
 							color="inherit"
 						>
-							<Avatar alt="..." src={perfil.nombre==='Samuel Bustamante'?'https://i.imgur.com/qSZaqys.jpg':perfil.foto}/>
+							<Avatar alt="..." src={perfil.nombre === 'Samuel Bustamante' ? 'https://i.imgur.com/qSZaqys.jpg' : perfil.foto} />
 						</IconButton>
 						<Menu
 							id="menu-appbar"

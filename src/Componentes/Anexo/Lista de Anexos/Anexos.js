@@ -24,7 +24,15 @@ import ErrorIcon from '@material-ui/icons/Error';
 import { red } from '@material-ui/core/colors';
 import clsx from 'clsx';
 import CloseIcon from '@material-ui/icons/Close';
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router-dom';
+import SpeedDial from '@material-ui/lab/SpeedDial';
+import SpeedDialIcon from '@material-ui/lab/SpeedDialIcon';
+import SpeedDialAction from '@material-ui/lab/SpeedDialAction';
+import AddCircleIcon from '@material-ui/icons/AddCircle';
+import { Redirect } from 'react-router-dom';
+import SearchIcon from '@material-ui/icons/Search';
+import InsertDriveFileIcon from '@material-ui/icons/InsertDriveFile';
+import PrintIcon from '@material-ui/icons/Print';
 
 const variantIcon = {
 	success: ErrorIcon
@@ -68,6 +76,16 @@ const useStyles = makeStyles(theme => ({
 	message: {
 		display: 'flex',
 		alignItems: 'center',
+	},
+	back: {
+		transform: 'translateZ(0px)',
+		position: 'fixed',
+		zIndex: 100
+	},
+	speedDial: {
+		position: 'fixed',
+		bottom: theme.spacing(8),
+		right: theme.spacing(2),
 	}
 }));
 
@@ -167,10 +185,14 @@ export default function Anexos() {
 	})
 	const [openMensaje, setOpenMensaje] = React.useState(false);
 	const [mensaje, setMensaje] = React.useState([])
+	const [open, setOpen] = React.useState(false);
+	const [nuevo, setNuevo] = React.useState(false)
+	const [listaBotones, setListaBotones] = React.useState([])
 
 	React.useEffect(() => {
 		consultaAnexo()
 		conteo()
+		consultarListaBotones()
 	}, []);
 
 	const consultaAnexo = async () => {
@@ -282,9 +304,54 @@ export default function Anexos() {
 		setOpenMensaje(false);
 	}
 
+	const handleOpen = () => {
+		setOpen(true);
+	};
+
+	const handleCloseButton = () => {
+		setOpen(false);
+	};
+
+	const irNuevo = () => {
+		setNuevo(true)
+	}
+
+	if (nuevo === true) {
+		return (<Redirect to={`/smnuAnexo/nuevo?id_anexo=${5}`} />)
+	}
+
+	const consultarListaBotones = () => {
+		consumeWS('GET', 'api/general/accesolistar', '', `?codigoformulario=mant_anexo_lista`)
+			.then(result => {
+				setListaBotones(result)
+			});
+	}
+
 	return (
 		<React.Fragment>
 			<CssBaseline />
+			<Backdrop open={open} className={classes.back} />
+			<SpeedDial
+				ariaLabel="SpeedDial tooltip example"
+				className={classes.speedDial}
+				icon={<SpeedDialIcon />}
+				onClose={handleCloseButton}
+				onOpen={handleOpen}
+				open={open}>
+
+				{listaBotones.map(botones => (
+					botones.nombre==='Editar'?
+					null:
+					botones.nombre==='Eliminar'?
+					null:
+					<SpeedDialAction
+						key={botones.nombre}
+						icon={botones.nombre === 'Buscar' ? <SearchIcon /> : botones.nombre === 'Excel' ? <InsertDriveFileIcon /> : botones.nombre === 'Imprimir' ? <PrintIcon /> : botones.nombre === 'Nuevo' ? <AddCircleIcon /> : ''}
+						tooltipTitle={botones.nombre}
+						onClick={botones.nombre==='Buscar'?()=>consultaAnexo():botones.nombre==='Excel'?()=>alert('Excel'):botones.nombre==='Imprimir'?()=>alert('Imprimir'):botones.nombre==='Nuevo'?()=>irNuevo(): ''}
+					/>
+				))}
+			</SpeedDial>
 			<Slide direction="left" in={true} mountOnEnter unmountOnExit timeout={1000}>
 				<Paper elevation={4} className={classes.root}>
 					<Snackbar
