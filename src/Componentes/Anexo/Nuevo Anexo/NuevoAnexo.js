@@ -22,7 +22,7 @@ import SpeedDial from '@material-ui/lab/SpeedDial';
 import SpeedDialIcon from '@material-ui/lab/SpeedDialIcon';
 import SpeedDialAction from '@material-ui/lab/SpeedDialAction';
 import CancelIcon from '@material-ui/icons/Cancel';
-import { Redirect } from 'react-router-dom'
+import { Redirect } from 'react-router-dom';
 
 const variantIcon = {
 	success: ErrorIcon
@@ -128,14 +128,16 @@ function MySnackbarContentWrapper(props) {
 	);
 }
 
-export default function NuevoAnexo() {
+export default function NuevoAnexo(props) {
 	const classes = useStyles();
 	const [anexo, setAnexo] = React.useState({
 		estado: 1,
 		id_empresa: 1,
 		id_tdocumento: "00",
 		id_pais: "24",
-		id_anexo: 0
+		id_anexo: 0,
+		ruc: '',
+		nm_anexo: ''
 	})
 	const [tdocumento, setTdocumento] = React.useState([])
 	const [pais, setPais] = React.useState([])
@@ -178,28 +180,44 @@ export default function NuevoAnexo() {
 	}
 
 	const guardar = () => {
-		consumeWS('POST', 'api/anexo/insertar', anexo, '')
-		.then(result => {
-				setMensaje(result)
-				if(mensaje.hasOwnProperty('error')){
-				if(mensaje.salida > 0){
-				alert('creado con ID ' +mensaje.salida)
-				setAnexo({
-					...anexo,
-					id_anexo: mensaje.salida
-				})
-				
-			}else{
-				
+		if (typeof anexo.nm_anexo === "undefined" || anexo.nm_anexo === '') {
+			setMensaje('Debe Ingresar Nombre de Anexo')
+			setOpenMensaje(true)
+			document.getElementById("nm_anexo").focus()
+			return;
+		} if (anexo.id_tdocumento === "06") {
+			if (typeof anexo.ruc === "undefined" || anexo.ruc === '' || anexo.ruc === '0' || anexo.ruc.length < 11 || anexo.ruc.length > 11) {
+				setMensaje('Número de identificación no válido')
+				setOpenMensaje(true)
+				document.getElementById("ruc").focus();
+				return;
 			}
-			}else{
-				let mensajes = Object.keys(mensaje)
-				if(mensajes.length>0){
-					for (let i = 0; i < mensajes.length; i++) {
-						// alert(mensaje[mensajes[i]][0])
+		} if (anexo.id_tdocumento === '01') {
+			if (typeof anexo.ruc === "undefined" || anexo.ruc === '' || anexo.ruc === '0' || anexo.ruc.length < 8 || anexo.ruc.length > 8) {
+				setMensaje('Número de identificación no válido')
+				setOpenMensaje(true)
+				document.getElementById("txtDocumentoIdent").focus();
+				return;
+			}
+		}
+		consumeWS('POST', 'api/anexo/insertar', anexo, '')
+			.then(result => {
+				if (result.hasOwnProperty('error')) {
+					if (result.salida > 0) {
+						props.history.push(`/smnuAnexo/editar?id_anexo=${result.salida}`)
+					} else {
+						setMensaje(result.error)
+						setOpenMensaje(true)
+					}
+				} else {
+					let mensajes = Object.keys(result)
+					if (mensajes.length > 0) {
+						for (let i = 0; i < mensajes.length; i++) {
+							setMensaje(mensaje[mensajes[i]][0])
+						}
+						setOpenMensaje(true)
 					}
 				}
-			}
 			})
 	}
 
@@ -242,9 +260,9 @@ export default function NuevoAnexo() {
 				{actions.map(action => (
 					<SpeedDialAction
 						key={action.name}
-						icon={action.name === 'Guardar' ? <SaveIcon /> : action.name === 'Cancelar' ? <CancelIcon /> :''}
+						icon={action.name === 'Guardar' ? <SaveIcon /> : action.name === 'Cancelar' ? <CancelIcon /> : ''}
 						tooltipTitle={action.name}
-						onClick={action.name === 'Guardar' ? () => guardar() : action.name === 'Cancelar' ? () => irAtras() :''}
+						onClick={action.name === 'Guardar' ? () => guardar() : action.name === 'Cancelar' ? () => irAtras() : ''}
 					/>
 				))}
 			</SpeedDial>
@@ -262,7 +280,7 @@ export default function NuevoAnexo() {
 						<MySnackbarContentWrapper
 							onClose={handleCloseMensaje}
 							variant="success"
-							message={mensaje.error}
+							message={mensaje}
 						/>
 					</Snackbar>
 					<Typography component="h1" variant="h4" align="center">

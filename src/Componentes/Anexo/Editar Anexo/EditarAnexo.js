@@ -166,6 +166,7 @@ export default function EditarAnexo() {
 	const [openMensaje, setOpenMensaje] = React.useState(false);
 	const [open, setOpen] = React.useState(false);
 	const [cancel, setCancel] = React.useState(false)
+	const [nuevo, setNuevo] = React.useState(false)
 
 	React.useEffect(() => {
 		id = recibirAnexo().id_anexo
@@ -318,18 +319,26 @@ export default function EditarAnexo() {
 		setOpen(false);
 	};
 
-	const irAtras=()=>{
+	const irAtras = () => {
 		setCancel(true)
 	}
 
-	if(cancel===true){
-		return (<Redirect to='/smnuAnexo'/>)
+	const irNuevo = () => {
+		setNuevo(true)
+	}
+
+	if (nuevo === true) {
+		return (<Redirect to={`/smnuAnexo/nuevo`} />)
+	}
+
+	if (cancel === true) {
+		return (<Redirect to='/smnuAnexo' />)
 	}
 
 	return (
 		<React.Fragment>
 			<CssBaseline />
-			<Backdrop open={open} className={classes.back}/>
+			<Backdrop open={open} className={classes.back} />
 			<SpeedDial
 				ariaLabel="SpeedDial tooltip example"
 				className={classes.speedDial}
@@ -341,9 +350,9 @@ export default function EditarAnexo() {
 				{actions.map(action => (
 					<SpeedDialAction
 						key={action.name}
-						icon={action.name==='Actualizar'?<SaveIcon/>:action.name==='Cancelar'?<CancelIcon/>:action.name==='Nuevo'?<AddCircleIcon/>:''}
+						icon={action.name === 'Actualizar' ? <SaveIcon /> : action.name === 'Cancelar' ? <CancelIcon /> : action.name === 'Nuevo' ? <AddCircleIcon /> : ''}
 						tooltipTitle={action.name}
-						onClick={action.name === 'Actualizar' ? () => guardar() : action.name==='Cancelar' ? ()=>irAtras():action.name==='Nuevo'? ()=>alert('nuevo anexo'):''}
+						onClick={action.name === 'Actualizar' ? () => guardar() : action.name === 'Cancelar' ? () => irAtras() : action.name === 'Nuevo' ? () => irNuevo() : ''}
 					/>
 				))}
 			</SpeedDial>

@@ -33,6 +33,8 @@ import { Redirect } from 'react-router-dom';
 import SearchIcon from '@material-ui/icons/Search';
 import InsertDriveFileIcon from '@material-ui/icons/InsertDriveFile';
 import PrintIcon from '@material-ui/icons/Print';
+import * as jsPDF from 'jspdf';
+import 'jspdf-autotable'
 
 const variantIcon = {
 	success: ErrorIcon
@@ -188,11 +190,30 @@ export default function Anexos() {
 	const [open, setOpen] = React.useState(false);
 	const [nuevo, setNuevo] = React.useState(false)
 	const [listaBotones, setListaBotones] = React.useState([])
+	const [reporte, setReporte] = React.useState({
+		page: "1",
+		id_empresa: "1",
+		id_anexo: "0",
+		nm_anexo: "",
+		nm_alias: "",
+		tdocumento: "",
+		ruc: "",
+		nomestado: "",
+		sortcolumn: "",
+		sortorder: "desc",
+		rows: 0
+	})
+	const [pdfBody, setPdfBody] = React.useState([])
+	const [totalGeneral, setTotalGeneral] = React.useState(0)
 
 	React.useEffect(() => {
 		consultaAnexo()
 		conteo()
 		consultarListaBotones()
+		consumeWS('POST', 'api/anexo/examinarcontador', filtro, '')
+			.then(result => {
+				setTotalGeneral(result)
+			});
 	}, []);
 
 	const consultaAnexo = async () => {
@@ -317,7 +338,7 @@ export default function Anexos() {
 	}
 
 	if (nuevo === true) {
-		return (<Redirect to={`/smnuAnexo/nuevo?id_anexo=${5}`} />)
+		return (<Redirect to={`/smnuAnexo/nuevo`} />)
 	}
 
 	const consultarListaBotones = () => {
@@ -326,6 +347,69 @@ export default function Anexos() {
 				setListaBotones(result)
 			});
 	}
+
+	const pdf = () => {
+		reporte.rows=totalGeneral
+			consumeWS('POST', 'api/anexo/examinar', reporte, '')
+				.then(result => {
+					setPdfBody(result)
+				});
+		generarPDF()
+	}
+
+	const generarPDF=()=>{
+		const pdf = new jsPDF('landscape');
+
+		// var imgData = `${Config.imagen}`;
+		// pdf.addImage(imgData, 'PNG', 20, 7, 30, 20);
+		pdf.setFontSize(15);
+		pdf.setTextColor(40);
+		pdf.setFontStyle('normal');
+		pdf.text("Lista de Anexos", 140, 17, 'center');
+		pdf.autoTable({
+			tableWidth: 'wrap',
+			margin: { top: 30, left: 20 },
+			tableLineColor: [0, 0, 0],
+			tableLineWidth: .5,
+			styles: {
+				lineColor: [0, 0, 0],
+				lineWidth: .5,
+				fontSize: 8
+			},
+
+			columnStyles: {
+				nm_anexo: { cellWidth: 80 },
+				nm_alias: { cellWidth: 80 },
+				tdocumento: { cellWidth: 40, halign: 'center' }
+			},
+
+			headStyles: {
+				fillColor: [126, 211, 238],
+				fontSize: 9,
+				textColor: [0, 0, 0]
+			},
+
+			bodyStyles: {
+				fillColor: [222, 224, 225],
+				fontSize: 8,
+				textColor: [0, 0, 0]
+			},
+			alternateRowStyles: {
+				fillColor: [240, 240, 240]
+			},
+
+			columns: [
+				{ header: 'ID', dataKey: 'id_anexo' },
+				{ header: 'Nombre', dataKey: 'nm_anexo' },
+				{ header: 'Nombre Corto', dataKey: 'nm_alias' },
+				{ header: 'TIpo de Documento', dataKey: 'tdocumento' },
+				{ header: 'N° de Documento', dataKey: 'ruc' },
+				{ header: 'Estado', dataKey: 'nomestado' }
+			],
+			body: pdfBody,
+		});
+		pdf.save("Lista de Anexos");
+	};
 
 	return (
 		<React.Fragment>
@@ -340,16 +424,16 @@ export default function Anexos() {
 				open={open}>
 
 				{listaBotones.map(botones => (
-					botones.nombre==='Editar'?
-					null:
-					botones.nombre==='Eliminar'?
-					null:
-					<SpeedDialAction
-						key={botones.nombre}
-						icon={botones.nombre === 'Buscar' ? <SearchIcon /> : botones.nombre === 'Excel' ? <InsertDriveFileIcon /> : botones.nombre === 'Imprimir' ? <PrintIcon /> : botones.nombre === 'Nuevo' ? <AddCircleIcon /> : ''}
-						tooltipTitle={botones.nombre}
-						onClick={botones.nombre==='Buscar'?()=>consultaAnexo():botones.nombre==='Excel'?()=>alert('Excel'):botones.nombre==='Imprimir'?()=>alert('Imprimir'):botones.nombre==='Nuevo'?()=>irNuevo(): ''}
-					/>
+					botones.nombre === 'Editar' ?
+						null :
+						botones.nombre === 'Eliminar' ?
+							null :
+							<SpeedDialAction
+								key={botones.nombre}
+								icon={botones.nombre === 'Buscar' ? <SearchIcon /> : botones.nombre === 'Excel' ? <InsertDriveFileIcon /> : botones.nombre === 'Imprimir' ? <PrintIcon /> : botones.nombre === 'Nuevo' ? <AddCircleIcon /> : ''}
+								tooltipTitle={botones.nombre}
+								onClick={botones.nombre === 'Buscar' ? () => consultaAnexo() : botones.nombre === 'Excel' ? () => alert('Excel') : botones.nombre === 'Imprimir' ? () => pdf() : botones.nombre === 'Nuevo' ? () => irNuevo() : ''}
+							/>
 				))}
 			</SpeedDial>
 			<Slide direction="left" in={true} mountOnEnter unmountOnExit timeout={1000}>
