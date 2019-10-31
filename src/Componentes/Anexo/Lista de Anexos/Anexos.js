@@ -34,7 +34,9 @@ import SearchIcon from '@material-ui/icons/Search';
 import InsertDriveFileIcon from '@material-ui/icons/InsertDriveFile';
 import PrintIcon from '@material-ui/icons/Print';
 import * as jsPDF from 'jspdf';
-import 'jspdf-autotable'
+import 'jspdf-autotable';
+import { saveAs } from 'file-saver';
+import Fab from '@material-ui/core/Fab';
 
 const variantIcon = {
 	success: ErrorIcon
@@ -349,19 +351,16 @@ export default function Anexos() {
 	}
 
 	const pdf = () => {
-		reporte.rows=totalGeneral
-			consumeWS('POST', 'api/anexo/examinar', reporte, '')
-				.then(result => {
-					setPdfBody(result)
-				});
+		reporte.rows = totalGeneral
+		consumeWS('POST', 'api/anexo/examinar', reporte, '')
+			.then(result => {
+				setPdfBody(result)
+			});
 		generarPDF()
 	}
 
-	const generarPDF=()=>{
+	const generarPDF = () => {
 		const pdf = new jsPDF('landscape');
-
-		// var imgData = `${Config.imagen}`;
-		// pdf.addImage(imgData, 'PNG', 20, 7, 30, 20);
 		pdf.setFontSize(15);
 		pdf.setTextColor(40);
 		pdf.setFontStyle('normal');
@@ -411,6 +410,120 @@ export default function Anexos() {
 		pdf.save("Lista de Anexos");
 	};
 
+	const excel = () => {
+		reporte.rows = totalGeneral
+		consumeWS('POST', 'api/anexo/examinar', reporte, '')
+			.then(result => {
+				setPdfBody(result)
+			});
+		generarExcel()
+	}
+
+	const generarExcel = () => {
+
+		var Excel = require('exceljs');
+
+		var workbook = new Excel.Workbook();
+		var worksheet = workbook.addWorksheet('Lista de Anexos');
+
+		worksheet.columns = [
+			{ header: 'ID', key: 'id_anexo', width: 10 },
+			{ header: 'Nombre', key: 'nm_anexo', width: 45 },
+			{ header: 'Nombre Corto', key: 'nm_alias', width: 45 },
+			{ header: 'Tipo de Documento', key: 'tdocumento', width: 25 },
+			{ header: 'N° de Documento', key: 'ruc', width: 25 },
+			{ header: 'Estado', key: 'nomestado', width: 25 }
+		];
+
+		worksheet.getCell('A1').alignment = { vertical: 'top', horizontal: 'center' };
+		worksheet.getCell('B1').alignment = { vertical: 'middle', horizontal: 'center' };
+		worksheet.getCell('C1').alignment = { vertical: 'bottom', horizontal: 'center' };
+		worksheet.getCell('D1').alignment = { vertical: 'middle', horizontal: 'center' };
+		worksheet.getCell('E1').alignment = { vertical: 'bottom', horizontal: 'center' };
+		worksheet.getCell('F1').alignment = { vertical: 'middle', horizontal: 'center' };
+
+		worksheet.getCell('A1').border = { top: { style: 'thick' }, left: { style: 'thick' }, bottom: { style: 'thick' }, right: { style: 'thick' } };
+		worksheet.getCell('B1').border = { top: { style: 'thick' }, left: { style: 'thick' }, bottom: { style: 'thick' }, right: { style: 'thick' } };
+		worksheet.getCell('C1').border = { top: { style: 'thick' }, left: { style: 'thick' }, bottom: { style: 'thick' }, right: { style: 'thick' } };
+		worksheet.getCell('D1').border = { top: { style: 'thick' }, left: { style: 'thick' }, bottom: { style: 'thick' }, right: { style: 'thick' } };
+		worksheet.getCell('E1').border = { top: { style: 'thick' }, left: { style: 'thick' }, bottom: { style: 'thick' }, right: { style: 'thick' } };
+		worksheet.getCell('F1').border = { top: { style: 'thick' }, left: { style: 'thick' }, bottom: { style: 'thick' }, right: { style: 'thick' } };
+
+
+		var rows = pdfBody
+		for (let i = 0; i < rows.length; i++) {
+			worksheet.addRow({
+				id_anexo: rows[i].id_anexo,
+				nm_anexo: rows[i].nm_anexo,
+				nm_alias: rows[i].nm_alias,
+				tdocumento: rows[i].tdocumento,
+				ruc: rows[i].ruc,
+				nomestado: rows[i].nomestado
+			});
+		}
+
+		worksheet.getColumn('A').alignment = { vertical: 'top', horizontal: 'center' };
+		worksheet.getColumn('D').alignment = { vertical: 'top', horizontal: 'center' };
+		worksheet.getColumn('E').alignment = { vertical: 'top', horizontal: 'center' };
+		worksheet.getColumn('F').alignment = { vertical: 'top', horizontal: 'center' };
+
+		worksheet.getColumn('A').font = { name: 'Arial', size: 10 };
+		worksheet.getColumn('B').font = { name: 'Arial', size: 10 };
+		worksheet.getColumn('C').font = { name: 'Arial', size: 10 };
+		worksheet.getColumn('D').font = { name: 'Arial', size: 10 };
+		worksheet.getColumn('E').font = { name: 'Arial', size: 10 };
+		worksheet.getColumn('F').font = { name: 'Arial', size: 10 };
+
+		worksheet.getColumn('A').border = { top: { style: 'thin' }, left: { style: 'thin' }, bottom: { style: 'thin' }, right: { style: 'thin' } };
+		worksheet.getColumn('B').border = { top: { style: 'thin' }, left: { style: 'thin' }, bottom: { style: 'thin' }, right: { style: 'thin' } };
+		worksheet.getColumn('C').border = { top: { style: 'thin' }, left: { style: 'thin' }, bottom: { style: 'thin' }, right: { style: 'thin' } };
+		worksheet.getColumn('D').border = { top: { style: 'thin' }, left: { style: 'thin' }, bottom: { style: 'thin' }, right: { style: 'thin' } };
+		worksheet.getColumn('E').border = { top: { style: 'thin' }, left: { style: 'thin' }, bottom: { style: 'thin' }, right: { style: 'thin' } };
+		worksheet.getColumn('F').border = { top: { style: 'thin' }, left: { style: 'thin' }, bottom: { style: 'thin' }, right: { style: 'thin' } };
+
+		worksheet.getCell('A1').fill = {
+			type: 'pattern',
+			pattern: 'solid',
+			fgColor: { argb: 'FF999999' }
+		};
+
+		worksheet.getCell('B1').fill = {
+			type: 'pattern',
+			pattern: 'solid',
+			fgColor: { argb: 'FF999999' }
+		};
+
+		worksheet.getCell('C1').fill = {
+			type: 'pattern',
+			pattern: 'solid',
+			fgColor: { argb: 'FF999999' }
+		};
+
+		worksheet.getCell('D1').fill = {
+			type: 'pattern',
+			pattern: 'solid',
+			fgColor: { argb: 'FF999999' }
+		}
+
+		worksheet.getCell('E1').fill = {
+			type: 'pattern',
+			pattern: 'solid',
+			fgColor: { argb: 'FF999999' }
+		}
+
+		worksheet.getCell('F1').fill = {
+			type: 'pattern',
+			pattern: 'solid',
+			fgColor: { argb: 'FF999999' }
+		}
+
+		workbook.xlsx.writeBuffer().then(function (data) {
+			const blob = new Blob([data]);
+			saveAs(blob, 'Anexos.xlsx');
+		});
+
+	}
+
 	return (
 		<React.Fragment>
 			<CssBaseline />
@@ -432,7 +545,7 @@ export default function Anexos() {
 								key={botones.nombre}
 								icon={botones.nombre === 'Buscar' ? <SearchIcon /> : botones.nombre === 'Excel' ? <InsertDriveFileIcon /> : botones.nombre === 'Imprimir' ? <PrintIcon /> : botones.nombre === 'Nuevo' ? <AddCircleIcon /> : ''}
 								tooltipTitle={botones.nombre}
-								onClick={botones.nombre === 'Buscar' ? () => consultaAnexo() : botones.nombre === 'Excel' ? () => alert('Excel') : botones.nombre === 'Imprimir' ? () => pdf() : botones.nombre === 'Nuevo' ? () => irNuevo() : ''}
+								onClick={botones.nombre === 'Buscar' ? () => consultaAnexo() : botones.nombre === 'Excel' ? () => excel() : botones.nombre === 'Imprimir' ? () => pdf() : botones.nombre === 'Nuevo' ? () => irNuevo() : ''}
 							/>
 				))}
 			</SpeedDial>
@@ -618,8 +731,13 @@ export default function Anexos() {
 									<StyledTableCell key='4' align='right' onClick={handletdocumento}>Tipo de Documento</StyledTableCell>
 									<StyledTableCell key='5' align='right' onClick={handleNDocumento}>N° Documento</StyledTableCell>
 									<StyledTableCell key='6' align='right'>Estado</StyledTableCell>
-									<StyledTableCell key='7' align='center'>Editar</StyledTableCell>
-									<StyledTableCell key='8' align='center'>Eliminar</StyledTableCell>
+									{listaBotones.map(botones => (
+										botones.nombre === 'Editar' ?
+											<StyledTableCell key='7' align='center'>Editar</StyledTableCell> :
+											botones.nombre === 'Eliminar' ?
+												<StyledTableCell key='8' align='center'>Eliminar</StyledTableCell> :
+												null
+									))}
 								</TableRow>
 							</TableHead>
 							<TableBody>
@@ -634,18 +752,23 @@ export default function Anexos() {
 													</TableCell>
 												);
 											})}
-											<TableCell align='center'>
-												<Link to={`/smnuAnexo/editar?id_anexo=${row.id_anexo}`}>
-													<IconButton>
-														<EditIcon />
-													</IconButton>
-												</Link>
-											</TableCell>
-											<TableCell align='center'>
-												<IconButton onClick={() => eliminarAnexo(row.id_anexo)}>
-													<DeleteForeverIcon />
-												</IconButton>
-											</TableCell>
+											{listaBotones.map(botones => (
+												botones.nombre === 'Editar' ?
+													<TableCell align='center'>
+														<Link to={`/smnuAnexo/editar?id_anexo=${row.id_anexo}`}>
+															<Fab size="small" color='primary'>
+																<EditIcon />
+															</Fab>
+														</Link>
+													</TableCell> :
+													botones.nombre === 'Eliminar' ?
+														<TableCell align='center'>
+															<Fab color='secondary' onClick={() => eliminarAnexo(row.id_anexo)} size="small">
+																<DeleteForeverIcon />
+															</Fab>
+														</TableCell> :
+														null
+											))}
 										</TableRow>
 									);
 								})}

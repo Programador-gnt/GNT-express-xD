@@ -196,7 +196,40 @@ export default function NuevoAnexo(props) {
 			if (typeof anexo.ruc === "undefined" || anexo.ruc === '' || anexo.ruc === '0' || anexo.ruc.length < 8 || anexo.ruc.length > 8) {
 				setMensaje('Número de identificación no válido')
 				setOpenMensaje(true)
-				document.getElementById("txtDocumentoIdent").focus();
+				document.getElementById("ruc").focus();
+				return;
+			}
+		}
+
+		if (anexo.id_tdocumento === '00') {
+			if (typeof anexo.ruc === "undefined" || anexo.ruc === '' || anexo.ruc === '0') {
+				setMensaje('Número de identificación no válido')
+				setOpenMensaje(true)
+				document.getElementById("ruc").focus();
+				return;
+			}
+		}
+		if (anexo.id_tdocumento === '04') {
+			if (typeof anexo.ruc === "undefined" || anexo.ruc === '' || anexo.ruc === '0') {
+				setMensaje('Número de identificación no válido')
+				setOpenMensaje(true)
+				document.getElementById("ruc").focus();
+				return;
+			}
+		}
+		if (anexo.id_tdocumento === '07') {
+			if (typeof anexo.ruc === "undefined" || anexo.ruc === '' || anexo.ruc === '0') {
+				setMensaje('Número de identificación no válido')
+				setOpenMensaje(true)
+				document.getElementById("ruc").focus();
+				return;
+			}
+		}
+		if (anexo.id_tdocumento === 'A') {
+			if (typeof anexo.ruc === "undefined" || anexo.ruc === '' || anexo.ruc === '0') {
+				setMensaje('Número de identificación no válido')
+				setOpenMensaje(true)
+				document.getElementById("ruc").focus();
 				return;
 			}
 		}
