@@ -380,7 +380,7 @@ export default function EditarAnexo(props) {
 						<MySnackbarContentWrapper
 							onClose={handleCloseMensaje}
 							variant={mensaje.error===''?'success':'error'}
-							message={mensaje.error===''?'Ok!': mensaje.error}
+							message={mensaje.error===''?'Operación se realizó correctamente': mensaje.error}
 						/>
 					</Snackbar>
 					<Typography component="h1" variant="h4" align="center">
