@@ -6,7 +6,7 @@ import routes from '../../routes';
 import Footer from './Footer';
 import CssBaseline from '@material-ui/core/CssBaseline';
 
-function Layout(props) {
+function Layout() {
 
 	return (
 		<React.Fragment>
@@ -27,7 +27,7 @@ function Layout(props) {
 							)} />
 					) : (null);
 				})}
-				<Redirect to="/inicio" />
+				<Redirect to="/login" />
 			</Switch>
 			<Footer />
 		</React.Fragment>
