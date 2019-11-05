@@ -9,9 +9,9 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 import { Redirect } from 'react-router-dom';
 import MenuMobile from './MenuMobile';
-import Opacidad from './FondoOpacidad';
 import HamburgerMenu from './Hamburg';
 import consumeWS from '../Config/WebService';
+import Backdrop from '@material-ui/core/Backdrop';
 
 const useStyles = makeStyles(theme => ({
 	root: {
@@ -22,6 +22,11 @@ const useStyles = makeStyles(theme => ({
 	},
 	title: {
 		flexGrow: 1
+	},
+	back: {
+		transform: 'translateZ(0px)',
+		position: 'fixed',
+		zIndex: 100
 	}
 }));
 
@@ -70,11 +75,6 @@ export default function MenuAppBar() {
 
 	if (localStorage.getItem('Token') === null) {
 		return (<Redirect to='/login' />)
-	}
-
-	var opacidad;
-	if (showMenu) {
-		opacidad = <Opacidad onClick={() => setShowMenu(false)} />;
 	}
 
 	return (
@@ -130,7 +130,7 @@ export default function MenuAppBar() {
 				</Toolbar>
 			</AppBar>
 			<MenuMobile mostrar={showMenu} />
-			{opacidad}
+			<Backdrop open={showMenu} className={classes.back} />
 		</div>
 	);
 }

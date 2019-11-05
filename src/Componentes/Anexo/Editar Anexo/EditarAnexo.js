@@ -25,7 +25,7 @@ import Backdrop from '@material-ui/core/Backdrop';
 import Snackbar from '@material-ui/core/Snackbar';
 import SnackbarContent from '@material-ui/core/SnackbarContent';
 import ErrorIcon from '@material-ui/icons/Error';
-import { red } from '@material-ui/core/colors';
+import { red, green } from '@material-ui/core/colors';
 import clsx from 'clsx';
 import CloseIcon from '@material-ui/icons/Close';
 import SaveIcon from '@material-ui/icons/Save';
@@ -34,10 +34,12 @@ import SpeedDialIcon from '@material-ui/lab/SpeedDialIcon';
 import SpeedDialAction from '@material-ui/lab/SpeedDialAction';
 import CancelIcon from '@material-ui/icons/Cancel';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
-import { Redirect } from 'react-router-dom'
+import { Redirect } from 'react-router-dom';
+import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 
 const variantIcon = {
-	success: ErrorIcon
+	error: ErrorIcon,
+	success: CheckCircleIcon
 }
 
 const useStyles = makeStyles(theme => ({
@@ -84,8 +86,11 @@ const useStyles = makeStyles(theme => ({
 		boxShadow: theme.shadows[5],
 		padding: theme.spacing(2, 4, 3)
 	},
-	success: {
+	error: {
 		backgroundColor: red[600],
+	},
+	success: {
+		backgroundColor: green[600],
 	},
 	iconVariant: {
 		opacity: 0.9,
@@ -152,7 +157,7 @@ function MySnackbarContentWrapper(props) {
 	);
 }
 
-export default function EditarAnexo() {
+export default function EditarAnexo(props) {
 	const classes = useStyles();
 	var id
 	const [anexo, setAnexo] = React.useState({})
@@ -264,7 +269,7 @@ export default function EditarAnexo() {
 				setMensaje(result)
 				setAbrir(false)
 				if (mensaje.error === "") {
-					setOpenMensaje(false)
+					setOpenMensaje(true)
 				} else {
 					setOpenMensaje(true)
 				}
@@ -278,7 +283,7 @@ export default function EditarAnexo() {
 			.then(result => {
 				setMensaje(result)
 				if (mensaje.error === "") {
-					setOpenMensaje(false)
+					setOpenMensaje(true)
 				} else {
 					setOpenMensaje(true)
 				}
@@ -290,8 +295,8 @@ export default function EditarAnexo() {
 		consumeWS('POST', 'api/anexo/modificar', anexo, '')
 			.then(result => {
 				setMensaje(result)
-				if (mensaje.hasOwnProperty('error')) {
-					setOpenMensaje(false)
+				if (mensaje.error==='') {
+					setOpenMensaje(true)
 				} else {
 					let mensajes = Object.keys(mensaje)
 					if (mensajes.length > 0) {
@@ -304,11 +309,16 @@ export default function EditarAnexo() {
 	}
 
 	const handleCloseMensaje = (event, reason) => {
+		if (reason === 'timeout') {
+			setOpenMensaje(false)
+		}
 		if (reason === 'clickaway') {
-			return;
+			setOpenMensaje(false)
+		}
+		if (typeof reason === 'undefined') {
+			setOpenMensaje(false)
 		}
 
-		setOpenMensaje(false);
 	}
 
 	const handleOpen = () => {
@@ -369,8 +379,8 @@ export default function EditarAnexo() {
 					>
 						<MySnackbarContentWrapper
 							onClose={handleCloseMensaje}
-							variant="success"
-							message={mensaje.error}
+							variant={mensaje.error===''?'success':'error'}
+							message={mensaje.error===''?'Ok!': mensaje.error}
 						/>
 					</Snackbar>
 					<Typography component="h1" variant="h4" align="center">
