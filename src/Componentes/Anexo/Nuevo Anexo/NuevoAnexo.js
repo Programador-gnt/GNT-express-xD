@@ -19,7 +19,7 @@ import clsx from 'clsx';
 import CloseIcon from '@material-ui/icons/Close';
 import SaveIcon from '@material-ui/icons/Save';
 import SpeedDial from '@material-ui/lab/SpeedDial';
-import SpeedDialIcon from '@material-ui/lab/SpeedDialIcon';
+import MenuIcon from '@material-ui/icons/Menu';
 import SpeedDialAction from '@material-ui/lab/SpeedDialAction';
 import CancelIcon from '@material-ui/icons/Cancel';
 import { Redirect } from 'react-router-dom';
@@ -285,7 +285,7 @@ export default function NuevoAnexo(props) {
 			<SpeedDial
 				ariaLabel="SpeedDial tooltip example"
 				className={classes.speedDial}
-				icon={<SpeedDialIcon />}
+				icon={<MenuIcon />}
 				onClose={handleCloseButton}
 				onOpen={handleOpen}
 				open={open}>
