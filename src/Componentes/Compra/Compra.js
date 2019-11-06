@@ -22,6 +22,10 @@ const useStyles = makeStyles(theme => ({
 		marginTop: theme.spacing(5),
 		marginLeft: theme.spacing(3),
 		marginRight: theme.spacing(2)
+	},
+	calendarios: {
+		marginTop: theme.spacing(10),
+		marginLeft: theme.spacing(5)
 	}
 }));
 
@@ -51,7 +55,7 @@ export default function Compra() {
 				</RadioGroup>
 			</FormControl>
 			{value === 'rangofechas' ?
-				<FormControl component="fieldset" className={classes.formControl}>
+				<FormControl component="fieldset" className={classes.calendarios}>
 					<MuiPickersUtilsProvider utils={DateFnsUtils}>
 						<Grid container justify="space-around">
 							<KeyboardDatePicker
