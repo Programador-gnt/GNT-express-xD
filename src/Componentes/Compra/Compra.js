@@ -22,21 +22,15 @@ import PrintIcon from '@material-ui/icons/Print';
 import Backdrop from '@material-ui/core/Backdrop';
 import TextField from '@material-ui/core/TextField';
 import MenuItem from '@material-ui/core/MenuItem';
-import ModalPanel from '../Layout/Modal'
+import ModalPanel from '../Layout/Modal';
+import consumeWS from '../Config/WebService';
+import Paper from '@material-ui/core/Paper';
 
 const useStyles = makeStyles(theme => ({
-	formControl: {
-		marginTop: theme.spacing(10),
-		marginLeft: theme.spacing(10)
-	},
 	texto: {
 		marginTop: theme.spacing(5),
 		marginLeft: theme.spacing(3),
 		marginRight: theme.spacing(2)
-	},
-	calendarios: {
-		marginTop: theme.spacing(10),
-		marginLeft: theme.spacing(5)
 	},
 	back: {
 		transform: 'translateZ(0px)',
@@ -50,15 +44,32 @@ const useStyles = makeStyles(theme => ({
 	},
 	campo: {
 		marginTop: theme.spacing(2)
+	},
+	layout: {
+		width: 'auto',
+		marginLeft: theme.spacing(2),
+		marginRight: theme.spacing(2),
+		marginTop: theme.spacing(12),
+		[theme.breakpoints.up(600 + theme.spacing(2) * 2)]: {
+			width: 'auto',
+			marginLeft: theme.spacing(2),
+			marginRight: theme.spacing(2),
+		},
+	},
+	paper: {
+		marginTop: theme.spacing(3),
+		marginBottom: theme.spacing(3),
+		padding: theme.spacing(2),
+		[theme.breakpoints.up(600 + theme.spacing(3) * 2)]: {
+			marginTop: theme.spacing(6),
+			marginBottom: theme.spacing(6),
+			padding: theme.spacing(3),
+		},
+	},
+	formControl:{
+		marginLeft: theme.spacing(2)
 	}
 }));
-
-const actions = [
-	{ nombre: 'Nuevo' },
-	{ nombre: 'Buscar' },
-	{ nombre: 'Imprimir' },
-	{ nombre: 'XLS' }
-];
 
 export default function Compra() {
 	const classes = useStyles();
@@ -74,6 +85,11 @@ export default function Compra() {
 		{ id_tdocumento: '03', alias: 'Documentos cerrados' }
 	])
 	const [showModal, setShowModal] = React.useState(false)
+	const [listaBotones, setListaBotones] = React.useState([])
+
+	React.useEffect(() => {
+		consultarListaBotones()
+	}, []);
 
 	const handleChange = event => {
 		setValue(event.target.value);
@@ -97,7 +113,7 @@ export default function Compra() {
 		}
 	}
 
-	const handleModal=()=>{
+	const handleModal = () => {
 		setShowModal(!showModal)
 	}
 
@@ -106,6 +122,13 @@ export default function Compra() {
 			...cuerpo,
 			[e.target.name]: e.target.value
 		})
+	}
+
+	const consultarListaBotones = () => {
+		consumeWS('GET', 'api/general/accesolistar', '', `?codigoformulario=ctbregistro_compras_lista`)
+			.then(result => {
+				setListaBotones(result)
+			});
 	}
 
 	return (
@@ -120,113 +143,128 @@ export default function Compra() {
 				onOpen={handleOpen}
 				open={open}>
 
-				{actions.map(botones => (
-					<SpeedDialAction
-						key={botones.nombre}
-						icon={botones.nombre === 'Nuevo' ? <AddCircleIcon /> : botones.nombre === 'Buscar' ? <SearchIcon /> : botones.nombre === 'Imprimir' ? <PrintIcon /> : botones.nombre === 'XLS' ? <InsertDriveFileIcon /> : ''}
-						tooltipTitle={botones.nombre}
-						onClick={botones.nombre === 'Nuevo' ? () => alert('nuevo') : botones.nombre === 'Buscar' ? () => alert('Buscar') : botones.nombre === 'Imprimir' ? () => alert('Imprimir') : botones.nombre === 'XLS' ? () => alert('XLS') : ''}
-					/>
+				{listaBotones.map(botones => (
+					botones.nombre === 'Editar' ?
+						null :
+						botones.nombre === 'Eliminar' ?
+							null :
+							<SpeedDialAction
+								key={botones.nombre}
+								icon={botones.nombre === 'Nuevo' ? <AddCircleIcon /> : botones.nombre === 'Buscar' ? <SearchIcon /> : botones.nombre === 'Imprimir' ? <PrintIcon /> : botones.nombre === 'Excel' ? <InsertDriveFileIcon /> : ''}
+								tooltipTitle={botones.nombre}
+								onClick={botones.nombre === 'Nuevo' ? () => alert('nuevo') : botones.nombre === 'Buscar' ? () => alert('Buscar') : botones.nombre === 'Imprimir' ? () => alert('Imprimir') : botones.nombre === 'Excel' ? () => alert('XLS') : ''}
+							/>
 				))}
 			</SpeedDial>
-			<FormControl component="fieldset" className={classes.formControl}>
-				<RadioGroup aria-label="gender" name="gender" value={value} onChange={handleChange}>
-					<FormControlLabel value="rangofechas" control={<Radio color='primary' />} label="Rango de fechas" />
-					<FormControlLabel value="noperacion" control={<Radio color='primary' />} label="Nro. Operación" />
-					<FormControlLabel value="ndocumento" control={<Radio color='primary' />} label="Nro. Documento" />
-					<FormControlLabel value="nvoucher" control={<Radio color='primary' />} label="Nro. Voucher" />
-					<FormControlLabel value="ntransaccion" control={<Radio color='primary' />} label="Nro. Transacción" />
-				</RadioGroup>
-			</FormControl>
-			{value === 'rangofechas' ?
-				<FormControl component="fieldset" className={classes.calendarios}>
-					<ModalPanel abrir={showModal} titulo='Busqueda de proveedor' funcion={handleModal.bind()}/>
-					<MuiPickersUtilsProvider utils={DateFnsUtils}>
-						<Grid container justify="space-around">
-							<KeyboardDatePicker
-								margin="normal"
-								id="date-picker-dialog"
-								label="Date picker dialog"
-								format="MM/dd/yyyy"
-								value={selectedDate}
-								onChange={handleDateChange}
-								KeyboardButtonProps={{
-									'aria-label': 'change date',
-								}}
-							/>
-							<Typography variant="subtitle1" gutterBottom className={classes.texto}>
-								Al
-      						</Typography>
-							<KeyboardDatePicker
-								margin="normal"
-								id="date-picker-dialog"
-								label="Date picker dialog"
-								format="MM/dd/yyyy"
-								value={selectedDate}
-								onChange={handleDateChange}
-								KeyboardButtonProps={{
-									'aria-label': 'change date',
-								}}
-							/>
-						</Grid>
-					</MuiPickersUtilsProvider>
-					<Grid item xs={12} sm={6}>
-						<TextField
-							id="proveedor"
-							name="proveedor"
-							autoComplete="proveedor"
-							value=''
-							helperText="Presiona F2"
-							label='Proveedor'
-							onKeyDown={tecla.bind()}
-						/>
-					</Grid>
-					<Grid item xs={12} sm={6}>
-						<TextField
-							required
-							id="estado"
-							select
-							value={cuerpo.estado}
-							name='estado'
-							onChange={onChange.bind()}
-							helperText="Seleccione el tipo de estado"
-							margin="normal">
-							{estado.map(documento => (
-								<MenuItem key={documento.id_tdocumento} value={documento.id_tdocumento}>
-									{documento.alias}
-								</MenuItem>
-							))}
-						</TextField>
-					</Grid>
-					<Grid item xs={12} sm={6}>
-						<TextField
-							id="liquidacion"
-							name="liquidaciondegastos"
-							autoComplete="liquidacion"
-							value={cuerpo.liquidaciondegastos}
-							label='Liquidación de gastos'
-							onChange={onChange.bind()}
-						/>
-					</Grid>
-				</FormControl> :
-				value === 'noperacion' ?
-					<FormControl component="fieldset" className={classes.formControl}>
-						<p>Nro operación</p>
-					</FormControl> :
-					value === 'ndocumento' ?
+			<main className={classes.layout}>
+				<Paper className={classes.paper}>
+					<FormControl component="fieldset">
+						<RadioGroup aria-label="gender" name="gender" value={value} onChange={handleChange}>
+							<FormControlLabel value="rangofechas" control={<Radio color='primary' />} label="Rango de fechas" />
+							<FormControlLabel value="noperacion" control={<Radio color='primary' />} label="Nro. Operación" />
+							<FormControlLabel value="ndocumento" control={<Radio color='primary' />} label="Nro. Documento" />
+							<FormControlLabel value="nvoucher" control={<Radio color='primary' />} label="Nro. Voucher" />
+							<FormControlLabel value="ntransaccion" control={<Radio color='primary' />} label="Nro. Transacción" />
+						</RadioGroup>
+					</FormControl>
+					{value === 'rangofechas' ?
 						<FormControl component="fieldset" className={classes.formControl}>
-							<p>Nro Documento</p>
+							<ModalPanel abrir={showModal} titulo='Busqueda de proveedores' funcion={handleModal.bind()} />
+							<Grid container>
+								<MuiPickersUtilsProvider utils={DateFnsUtils}>
+									<Grid item xs={12} sm={5}>
+										<KeyboardDatePicker
+											margin="normal"
+											id="date-picker-dialog"
+											label="Date picker dialog"
+											format="MM/dd/yyyy"
+											value={selectedDate}
+											onChange={handleDateChange}
+											KeyboardButtonProps={{
+												'aria-label': 'change date',
+											}}
+										/>
+									</Grid>
+									<Grid item xs={12} sm={2}>
+										<Typography variant="body1" gutterBottom className={classes.texto}>
+											Al
+      										</Typography>
+									</Grid>
+									<Grid item xs={12} sm={5}>
+										<KeyboardDatePicker
+											margin="normal"
+											id="date-picker-dialog"
+											label="Date picker dialog"
+											format="MM/dd/yyyy"
+											value={selectedDate}
+											onChange={handleDateChange}
+											KeyboardButtonProps={{
+												'aria-label': 'change date',
+											}}
+										/>
+									</Grid>
+								</MuiPickersUtilsProvider>
+
+							</Grid>
+							<Grid item xs={12} sm={6}>
+								<TextField
+									id="proveedor"
+									name="proveedor"
+									autoComplete="proveedor"
+									value=''
+									helperText="Presiona F2"
+									label='Proveedor'
+									onKeyDown={tecla.bind()}
+								/>
+							</Grid>
+							<Grid item xs={12} sm={6}>
+								<TextField
+									required
+									id="estado"
+									select
+									value={cuerpo.estado}
+									name='estado'
+									onChange={onChange.bind()}
+									helperText="Seleccione el tipo de estado"
+									margin="normal">
+									{estado.map(documento => (
+										<MenuItem key={documento.id_tdocumento} value={documento.id_tdocumento}>
+											{documento.alias}
+										</MenuItem>
+									))}
+								</TextField>
+							</Grid>
+							<Grid item xs={12} sm={6}>
+								<TextField
+									id="liquidacion"
+									name="liquidaciondegastos"
+									autoComplete="liquidacion"
+									value={cuerpo.liquidaciondegastos}
+									label='Liquidación de gastos'
+									onChange={onChange.bind()}
+								/>
+							</Grid>
 						</FormControl> :
-						value === 'nvoucher' ?
+						value === 'noperacion' ?
 							<FormControl component="fieldset" className={classes.formControl}>
-								<p>Nro Voucher</p>
+								<p>Nro operación</p>
 							</FormControl> :
-							value === 'ntransaccion' ?
+							value === 'ndocumento' ?
 								<FormControl component="fieldset" className={classes.formControl}>
-									<p>Nro Transacción</p>
+									<p>Nro Documento</p>
 								</FormControl> :
-								null
-			}
+								value === 'nvoucher' ?
+									<FormControl component="fieldset" className={classes.formControl}>
+										<p>Nro Voucher</p>
+									</FormControl> :
+									value === 'ntransaccion' ?
+										<FormControl component="fieldset" className={classes.formControl}>
+											<p>Nro Transacción</p>
+										</FormControl> :
+										null
+					}
+				</Paper>
+			</main>
 		</React.Fragment>
 	);
 }

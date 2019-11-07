@@ -8,6 +8,8 @@ import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
 import MenuItem from '@material-ui/core/MenuItem';
 import TextField from '@material-ui/core/TextField';
+import Fab from '@material-ui/core/Fab';
+import SearchIcon from '@material-ui/icons/Search';
 
 const useStyles = makeStyles(theme => ({
 	modal: {
@@ -20,6 +22,9 @@ const useStyles = makeStyles(theme => ({
 		border: '2px solid #000',
 		boxShadow: theme.shadows[5],
 		padding: theme.spacing(2, 4, 3)
+	},
+	boton: {
+		marginTop: theme.spacing(1)
 	}
 }));
 
@@ -58,21 +63,42 @@ export default function ModalPanel(props) {
 						<Typography variant="h6">
 							{props.titulo}
 						</Typography>
-						<Grid item xs={12}>
-							<TextField
-								required
-								id="id_tdocumento"
-								fullWidth
-								select
-								value={proveedor.id_tdocumento}
-								onChange={onChange.bind()}
-								name='id_tdocumento'
-								margin="normal">
-								{tdocumento.map(documento => (
-									<MenuItem key={documento.id_tdocumento} value={documento.id_tdocumento}>{documento.alias}</MenuItem>
-								))}
-							</TextField>
-						</Grid>
+						{props.titulo === 'Busqueda de proveedores' ?
+							<Grid container spacing={3}>
+								<Grid item xs={12} sm={4}>
+									<TextField
+										required
+										id="id_tdocumento"
+										fullWidth
+										select
+										value={proveedor.id_tdocumento}
+										onChange={onChange.bind()}
+										name='id_tdocumento'
+										margin="normal">
+										{tdocumento.map(documento => (
+											<MenuItem key={documento.id_tdocumento} value={documento.id_tdocumento}>{documento.alias}</MenuItem>
+										))}
+									</TextField>
+								</Grid>
+								<Grid item xs={12} sm={6}>
+									<TextField
+										required
+										id="campobusqueda"
+										fullWidth
+										onChange={onChange.bind()}
+										name='campobusqueda'
+										label={proveedor.id_tdocumento === '01' ? 'Número' : proveedor.id_tdocumento === '02' ? 'Nombre' : proveedor.id_tdocumento === '03' ? 'Alias' : ''} />
+								</Grid>
+								<Grid item xs={12} sm={2}>
+									<Fab size="small" color='primary' className={classes.boton}>
+										<SearchIcon />
+									</Fab>
+								</Grid>
+								<Grid item xs={12}>
+									
+								</Grid>
+							</Grid>
+							: null}
 					</div>
 				</Fade>
 			</Modal>
