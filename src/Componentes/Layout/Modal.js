@@ -10,6 +10,9 @@ import MenuItem from '@material-ui/core/MenuItem';
 import TextField from '@material-ui/core/TextField';
 import Fab from '@material-ui/core/Fab';
 import SearchIcon from '@material-ui/icons/Search';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText'
 
 const useStyles = makeStyles(theme => ({
 	modal: {
@@ -25,10 +28,24 @@ const useStyles = makeStyles(theme => ({
 	},
 	boton: {
 		marginTop: theme.spacing(1)
+	},
+	lista: {
+		widht: '100%',
+		position: 'relative',
+		maxHeight: 300,
+		overflow: 'auto'
+	},
+	item: {
+		'&:focus': {
+			background: "rgba(74, 78, 178, 0.914)",
+			color: 'white',
+			boxShadow: theme.shadows[8]
+		}
 	}
 }));
 
 export default function ModalPanel(props) {
+	const classes = useStyles();
 	const [tdocumento, setTdocumento] = React.useState([
 		{ id_tdocumento: '01', alias: 'RUC' },
 		{ id_tdocumento: '02', alias: 'Nombre' },
@@ -37,7 +54,17 @@ export default function ModalPanel(props) {
 	const [proveedor, setProveedor] = React.useState({
 		id_tdocumento: '01'
 	})
-	const classes = useStyles();
+	const [listaProveedores, setListaProveedores] = React.useState([
+		{ id: 1, codigo: 10741, nombre: 'Samuel' },
+		{ id: 2, codigo: 20852, nombre: 'Enmanuel' },
+		{ id: 3, codigo: 30963, nombre: 'Luis' },
+		{ id: 4, codigo: 40147, nombre: 'Xiomara' },
+		{ id: 5, codigo: 50259, nombre: 'Juan' },
+		{ id: 6, codigo: 60987, nombre: 'Alex' },
+		{ id: 7, codigo: 70123, nombre: 'Jorge' },
+		{ id: 8, codigo: 80852, nombre: 'Wilder' }
+	])
+	var numero = 1
 
 	const onChange = (e) => {
 		setProveedor({
@@ -46,10 +73,33 @@ export default function ModalPanel(props) {
 		})
 	}
 
+	const tecla = (e) => {
+		if (e.keyCode === 40) {
+			document.getElementById(numero === listaProveedores.length ? listaProveedores.length : numero = numero + 1).focus()
+		}
+
+		if (e.keyCode === 38) {
+			document.getElementById(numero === 1 ? 1 : numero = numero - 1).focus()
+		}
+	}
+
+	const enterSelect=(e)=>{
+		if(e.keyCode===13){
+			document.getElementById('campobusqueda').focus()
+		}
+	}
+
+	const arrowDownCampo=(e)=>{
+		if(e.keyCode===40){
+			document.getElementById(1).focus()
+		}
+	}
+
 	return (
 		<React.Fragment>
 			<CssBaseline />
 			<Modal
+				// onKeyDown={tecla.bind()}
 				aria-labelledby='transition-modal-title'
 				aria-describedby="transition-modal-description"
 				className={classes.modal}
@@ -67,11 +117,13 @@ export default function ModalPanel(props) {
 							<Grid container spacing={3}>
 								<Grid item xs={12} sm={4}>
 									<TextField
+										autoFocus
 										required
 										id="id_tdocumento"
 										fullWidth
 										select
 										value={proveedor.id_tdocumento}
+										onKeyDown={enterSelect.bind()}
 										onChange={onChange.bind()}
 										name='id_tdocumento'
 										margin="normal">
@@ -85,6 +137,7 @@ export default function ModalPanel(props) {
 										required
 										id="campobusqueda"
 										fullWidth
+										onKeyDown={arrowDownCampo.bind()}
 										onChange={onChange.bind()}
 										name='campobusqueda'
 										label={proveedor.id_tdocumento === '01' ? 'Número' : proveedor.id_tdocumento === '02' ? 'Nombre' : proveedor.id_tdocumento === '03' ? 'Alias' : ''} />
@@ -95,7 +148,13 @@ export default function ModalPanel(props) {
 									</Fab>
 								</Grid>
 								<Grid item xs={12}>
-									
+									<List className={classes.lista} onKeyDown={tecla.bind()}>
+										{listaProveedores.map(item => (
+											<ListItem button className={classes.item} id={item.id} key={item.id} onClick={() => props.capturarProveedor(item.codigo, item.nombre)}>
+												<ListItemText primary={`${item.codigo}  ${item.nombre}`} />
+											</ListItem>
+										))}
+									</List>
 								</Grid>
 							</Grid>
 							: null}

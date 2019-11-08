@@ -66,8 +66,12 @@ const useStyles = makeStyles(theme => ({
 			padding: theme.spacing(3),
 		},
 	},
-	formControl:{
+	formControl: {
 		marginLeft: theme.spacing(2)
+	},
+	nombreProveedor:{
+		marginTop: theme.spacing(4),
+		marginLeft: theme.spacing(1)
 	}
 }));
 
@@ -77,7 +81,9 @@ export default function Compra() {
 	const [selectedDate, setSelectedDate] = React.useState(new Date());
 	const [open, setOpen] = React.useState(false);
 	const [cuerpo, setCuerpo] = React.useState({
-		estado: '01'
+		estado: '01',
+		codigoProveedor: '',
+		nombreProveedor: ''
 	})
 	const [estado, setEstado] = React.useState([
 		{ id_tdocumento: '01', alias: 'Todos los documentos' },
@@ -122,6 +128,15 @@ export default function Compra() {
 			...cuerpo,
 			[e.target.name]: e.target.value
 		})
+	}
+
+	const recibirProveedor = (codigo, nombre) => {
+		setCuerpo({
+			...cuerpo,
+			codigoProveedor: codigo,
+			nombreProveedor: nombre
+		})
+		setShowModal(!showModal)
 	}
 
 	const consultarListaBotones = () => {
@@ -169,7 +184,7 @@ export default function Compra() {
 					</FormControl>
 					{value === 'rangofechas' ?
 						<FormControl component="fieldset" className={classes.formControl}>
-							<ModalPanel abrir={showModal} titulo='Busqueda de proveedores' funcion={handleModal.bind()} />
+							<ModalPanel abrir={showModal} titulo='Busqueda de proveedores' funcion={handleModal.bind()} capturarProveedor={recibirProveedor.bind()}/>
 							<Grid container>
 								<MuiPickersUtilsProvider utils={DateFnsUtils}>
 									<Grid item xs={12} sm={5}>
@@ -186,9 +201,7 @@ export default function Compra() {
 										/>
 									</Grid>
 									<Grid item xs={12} sm={2}>
-										<Typography variant="body1" gutterBottom className={classes.texto}>
-											Al
-      										</Typography>
+										<Typography variant="body1" gutterBottom className={classes.texto}>Al</Typography>
 									</Grid>
 									<Grid item xs={12} sm={5}>
 										<KeyboardDatePicker
@@ -206,18 +219,23 @@ export default function Compra() {
 								</MuiPickersUtilsProvider>
 
 							</Grid>
-							<Grid item xs={12} sm={6}>
-								<TextField
-									id="proveedor"
-									name="proveedor"
-									autoComplete="proveedor"
-									value=''
-									helperText="Presiona F2"
-									label='Proveedor'
-									onKeyDown={tecla.bind()}
-								/>
+							<Grid container>
+								<Grid item xs={12} sm={2}>
+									<TextField
+										id="proveedor"
+										name="proveedor"
+										autoComplete="proveedor"
+										value={cuerpo.codigoProveedor}
+										helperText="Presiona F2"
+										label='Proveedor'
+										onKeyDown={tecla.bind()}
+									/>
+								</Grid>
+								<Grid item xs={12} sm={7} className={classes.nombreProveedor}>
+									<Typography variant="body2" gutterBottom>{cuerpo.nombreProveedor}</Typography>
+								</Grid>
 							</Grid>
-							<Grid item xs={12} sm={6}>
+							<Grid item xs={12} sm={4}>
 								<TextField
 									required
 									id="estado"
