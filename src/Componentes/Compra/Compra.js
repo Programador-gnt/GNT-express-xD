@@ -130,11 +130,11 @@ export default function Compra() {
 		})
 	}
 
-	const recibirProveedor = (codigo, nombre) => {
+	const recibirProveedor = (id_anexo, nm_anexo) => {
 		setCuerpo({
 			...cuerpo,
-			codigoProveedor: codigo,
-			nombreProveedor: nombre
+			codigoProveedor: id_anexo,
+			nombreProveedor: nm_anexo
 		})
 		setShowModal(!showModal)
 	}
