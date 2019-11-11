@@ -137,7 +137,8 @@ export default function NuevoAnexo(props) {
 		id_pais: "24",
 		id_anexo: 0,
 		ruc: '',
-		nm_anexo: ''
+		nm_anexo: '',
+		nodomiciliado: false
 	})
 	const [tdocumento, setTdocumento] = React.useState([])
 	const [pais, setPais] = React.useState([])
@@ -177,6 +178,7 @@ export default function NuevoAnexo(props) {
 			...anexo,
 			[e.target.name]: e.target.checked
 		})
+		
 	}
 
 	const guardar = () => {
@@ -538,9 +540,11 @@ export default function NuevoAnexo(props) {
 								<FormControlLabel
 									control={
 										<Checkbox
+											checked={anexo.nodomiciliado === true ? true : false}
+											value={anexo.nodomiciliado}
 											name='nodomiciliado'
 											onChange={handleChange.bind()}
-											value="nodomiciliado" />
+											 />
 									}
 									label='No domiciliado'
 									className={classes.campo}

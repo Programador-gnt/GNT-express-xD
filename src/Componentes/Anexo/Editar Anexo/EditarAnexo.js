@@ -295,9 +295,10 @@ export default function EditarAnexo(props) {
 		consumeWS('POST', 'api/anexo/modificar', anexo, '')
 			.then(result => {
 				setMensaje(result)
-				if (mensaje.error==='') {
+				if (mensaje.error === '') {
 					setOpenMensaje(true)
 				} else {
+					setOpenMensaje(true)
 					let mensajes = Object.keys(mensaje)
 					if (mensajes.length > 0) {
 						for (let i = 0; i < mensajes.length; i++) {
@@ -379,8 +380,8 @@ export default function EditarAnexo(props) {
 					>
 						<MySnackbarContentWrapper
 							onClose={handleCloseMensaje}
-							variant={mensaje.error===''?'success':'error'}
-							message={mensaje.error===''?'Operación se realizó correctamente': mensaje.error}
+							variant={mensaje.error === '' ? 'success' : 'error'}
+							message={mensaje.error === '' ? 'Operación se realizó correctamente' : mensaje.error}
 						/>
 					</Snackbar>
 					<Typography component="h1" variant="h4" align="center">
@@ -535,8 +536,7 @@ export default function EditarAnexo(props) {
 									id="ciudad"
 									name="ciudad"
 									fullWidth
-									autoComplete="billing address-level2"
-									onChage={onChange.bind()}
+									onChange={onChange.bind()}
 									value={anexo.ciudad}
 									helperText='Ciudad'
 									className={classes.campo}
@@ -607,7 +607,7 @@ export default function EditarAnexo(props) {
 								<FormControlLabel
 									control={
 										<Checkbox
-											checked={anexo.nodomiciliado}
+											checked={anexo.nodomiciliado === true ? true : false}
 											name='nodomiciliado'
 											onChange={handleChange.bind()}
 											value="nodomiciliado" />

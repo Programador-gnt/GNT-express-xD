@@ -130,7 +130,7 @@ export default function MenuAppBar() {
 				</Toolbar>
 			</AppBar>
 			<MenuMobile mostrar={showMenu} />
-			<Backdrop open={showMenu} className={classes.back} />
+			<Backdrop open={showMenu} className={classes.back} onClick={()=>Abrir()}/>
 		</div>
 	);
 }

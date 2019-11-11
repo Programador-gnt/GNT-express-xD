@@ -1,5 +1,5 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles, withStyles } from '@material-ui/core/styles';
 import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
@@ -25,6 +25,13 @@ import MenuItem from '@material-ui/core/MenuItem';
 import ModalPanel from '../Layout/Modal';
 import consumeWS from '../Config/WebService';
 import Paper from '@material-ui/core/Paper';
+import Fab from '@material-ui/core/Fab';
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableHead from '@material-ui/core/TableHead';
+import TablePagination from '@material-ui/core/TablePagination';
+import TableRow from '@material-ui/core/TableRow';
 
 const useStyles = makeStyles(theme => ({
 	texto: {
@@ -40,7 +47,7 @@ const useStyles = makeStyles(theme => ({
 	speedDial: {
 		position: 'fixed',
 		bottom: theme.spacing(8),
-		right: theme.spacing(2),
+		right: theme.spacing(2)
 	},
 	campo: {
 		marginTop: theme.spacing(2)
@@ -49,7 +56,7 @@ const useStyles = makeStyles(theme => ({
 		width: 'auto',
 		marginLeft: theme.spacing(2),
 		marginRight: theme.spacing(2),
-		marginTop: theme.spacing(12),
+		marginTop: theme.spacing(8),
 		[theme.breakpoints.up(600 + theme.spacing(2) * 2)]: {
 			width: 'auto',
 			marginLeft: theme.spacing(2),
@@ -57,7 +64,7 @@ const useStyles = makeStyles(theme => ({
 		},
 	},
 	paper: {
-		marginTop: theme.spacing(3),
+		marginTop: theme.spacing(1),
 		marginBottom: theme.spacing(3),
 		padding: theme.spacing(2),
 		[theme.breakpoints.up(600 + theme.spacing(3) * 2)]: {
@@ -69,11 +76,118 @@ const useStyles = makeStyles(theme => ({
 	formControl: {
 		marginLeft: theme.spacing(2)
 	},
-	nombreProveedor:{
+	nombreProveedor: {
 		marginTop: theme.spacing(4),
 		marginLeft: theme.spacing(1)
+	},
+	fab: {
+		marginLeft: theme.spacing(1),
+		marginTop: theme.spacing(1)
+	},
+	table: {
+		marginTop: theme.spacing(3)
 	}
 }));
+
+const columns = [
+	{ id: 'OPE', label: 'OPE', minWidth: 170 },
+	{ id: 'VOU', label: 'VOU', minWidth: 100 },
+	{
+		id: 'fecha',
+		label: 'Fecha',
+		minWidth: 170,
+		align: 'right',
+		format: value => value.toLocaleString(),
+	},
+	{
+		id: 'td',
+		label: 'TD',
+		minWidth: 170,
+		align: 'right',
+		format: value => value.toLocaleString(),
+	},
+	{
+		id: 'serie',
+		label: 'Serie',
+		minWidth: 170,
+		align: 'right',
+		format: value => value.toFixed(2),
+	},
+	{
+		id: 'documento',
+		label: 'Documento',
+		minWidth: 170,
+		align: 'right',
+		format: value => value.toFixed(2),
+	},
+	{
+		id: 'liqgastos',
+		label: 'LiqGastos',
+		minWidth: 170,
+		align: 'right',
+		format: value => value.toFixed(2),
+	},
+	{
+		id: 'oc',
+		label: 'O.C.',
+		minWidth: 170,
+		align: 'right',
+		format: value => value.toFixed(2),
+	},
+	{
+		id: 'documento',
+		label: 'Documento',
+		minWidth: 170,
+		align: 'right',
+		format: value => value.toFixed(2),
+	},
+	{
+		id: 'documento',
+		label: 'Documento',
+		minWidth: 170,
+		align: 'right',
+		format: value => value.toFixed(2),
+	},
+	{
+		id: 'documento',
+		label: 'Documento',
+		minWidth: 170,
+		align: 'right',
+		format: value => value.toFixed(2),
+	},
+	{
+		id: 'documento',
+		label: 'Documento',
+		minWidth: 170,
+		align: 'right',
+		format: value => value.toFixed(2),
+	},
+	{
+		id: 'documento',
+		label: 'Documento',
+		minWidth: 170,
+		align: 'right',
+		format: value => value.toFixed(2),
+	},
+	{
+		id: 'documento',
+		label: 'Documento',
+		minWidth: 170,
+		align: 'right',
+		format: value => value.toFixed(2),
+	},
+];
+
+const StyledTableCell = withStyles(theme => ({
+	head: {
+		backgroundColor: '#4a48b2',
+		color: theme.palette.common.white,
+		cursor: 'pointer'
+	},
+	body: {
+		fontSize: 14,
+	},
+}))(TableCell);
 
 export default function Compra() {
 	const classes = useStyles();
@@ -92,6 +206,7 @@ export default function Compra() {
 	])
 	const [showModal, setShowModal] = React.useState(false)
 	const [listaBotones, setListaBotones] = React.useState([])
+	const [filtro, setFiltro] = React.useState([])
 
 	React.useEffect(() => {
 		consultarListaBotones()
@@ -172,6 +287,18 @@ export default function Compra() {
 				))}
 			</SpeedDial>
 			<main className={classes.layout}>
+				{listaBotones.map(botones => (
+					botones.nombre === 'Editar' ?
+						null :
+						botones.nombre === 'Eliminar' ?
+							null :
+							<Fab className={classes.fab} color='primary' size="small">
+								{botones.nombre === 'Nuevo' ? <AddCircleIcon /> :
+									botones.nombre === 'Buscar' ? <SearchIcon /> :
+										botones.nombre === 'Imprimir' ? <PrintIcon /> :
+											botones.nombre === 'Excel' ? <InsertDriveFileIcon /> : ''}
+							</Fab>
+				))}
 				<Paper className={classes.paper}>
 					<FormControl component="fieldset">
 						<RadioGroup aria-label="gender" name="gender" value={value} onChange={handleChange}>
@@ -184,7 +311,7 @@ export default function Compra() {
 					</FormControl>
 					{value === 'rangofechas' ?
 						<FormControl component="fieldset" className={classes.formControl}>
-							<ModalPanel abrir={showModal} funcion={handleModal.bind()} capturarProveedor={recibirProveedor.bind()} tipo='PRV'/>
+							<ModalPanel abrir={showModal} funcion={handleModal.bind()} capturarProveedor={recibirProveedor.bind()} tipo='PRV' />
 							<Grid container>
 								<MuiPickersUtilsProvider utils={DateFnsUtils}>
 									<Grid item xs={12} sm={5}>
@@ -281,6 +408,80 @@ export default function Compra() {
 										</FormControl> :
 										null
 					}
+					<div>
+						<Table stickyHeader aria-label="sticky table" size="small" className={classes.table}>
+							<TableHead >
+								<TableRow>
+									<StyledTableCell key='1' >OPE</StyledTableCell>
+									<StyledTableCell key='2' >VOU</StyledTableCell>
+									<StyledTableCell key='3' align='right' >Fecha</StyledTableCell>
+									<StyledTableCell key='4' align='right' >TD</StyledTableCell>
+									<StyledTableCell key='5' align='right' >Serie</StyledTableCell>
+									<StyledTableCell key='6' align='right'>Documento</StyledTableCell>
+									<StyledTableCell key='7' align='right'>LiqGastos</StyledTableCell>
+									<StyledTableCell key='8' align='right' >O.C.</StyledTableCell>
+									<StyledTableCell key='9' align='right' >Proveedor</StyledTableCell>
+									<StyledTableCell key='10' align='right' >Moneda</StyledTableCell>
+									<StyledTableCell key='11' align='right' >Neto</StyledTableCell>
+									<StyledTableCell key='12' align='right' >Glosa</StyledTableCell>
+									<StyledTableCell key='13' align='right' >CD</StyledTableCell>
+									<StyledTableCell key='14' align='right' >Estado</StyledTableCell>
+									{listaBotones.map(botones => (
+										botones.nombre === 'Editar' ?
+											<StyledTableCell key='15' align='center'>Editar</StyledTableCell> :
+											botones.nombre === 'Eliminar' ?
+												<StyledTableCell key='16' align='center'>Eliminar</StyledTableCell> :
+												null
+									))}
+								</TableRow>
+							</TableHead>
+							<TableBody>
+								{/* {rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(row => {
+									return (
+										<TableRow hover tabIndex={-1} key={row.code}>
+											{columns.map(column => {
+												const value = row[column.id];
+												return (
+													<TableCell key={column.id} align={column.align}>
+														{column.format && typeof value === 'number' ? column.format(value) : value}
+													</TableCell>
+												);
+											})}
+											{listaBotones.map(botones => (
+												botones.nombre === 'Editar' ?
+													<TableCell align='center' className={classes.celdas}>
+														<Link to={`/smnuAnexo/editar?id_anexo=${row.id_anexo}`}>
+															<Fab size="small" color='primary'>
+																<EditIcon />
+															</Fab>
+														</Link>
+													</TableCell> :
+													botones.nombre === 'Eliminar' ?
+														<TableCell align='center' className={classes.celdas}>
+															<Fab color='secondary' onClick={() => eliminarAnexo(row.id_anexo)} size="small">
+																<DeleteForeverIcon />
+															</Fab>
+														</TableCell> :
+														null
+											))}
+										</TableRow>
+									);
+								})}
+								<TableRow>
+									<TablePagination
+										rowsPerPageOptions={[10, 25, 50]}
+										count={total}
+										rowsPerPage={filtro.rows}
+										page={filtro.page - 1}
+										onChangePage={handleChangePage}
+										onChangeRowsPerPage={handleChangeRowsPerPage}
+										labelRowsPerPage={'Items por página'}
+										labelDisplayedRows={({ from, to, count }) => `${from}-${to} de ${count}`}
+									/>
+								</TableRow> */}
+							</TableBody>
+						</Table>
+					</div>
 				</Paper>
 			</main>
 		</React.Fragment>

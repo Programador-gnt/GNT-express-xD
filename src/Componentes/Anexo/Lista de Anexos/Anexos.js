@@ -55,8 +55,10 @@ const useStyles = makeStyles(theme => ({
 		margin: theme.spacing(10)
 	},
 	tableWrapper: {
-		height: '100%',
-		overflow: 'auto'
+		maxHeight: '78%',
+		overflow: 'auto',
+		position: 'fixed',
+		width: '100%',
 	},
 	modal: {
 		display: 'flex',
@@ -95,6 +97,9 @@ const useStyles = makeStyles(theme => ({
 		position: 'fixed',
 		bottom: theme.spacing(8),
 		right: theme.spacing(2),
+	},
+	celdas: {
+		width: '5px'
 	}
 }));
 
@@ -573,8 +578,8 @@ export default function Anexos() {
 				>
 					<MySnackbarContentWrapper
 						onClose={handleCloseMensaje}
-						variant={mensaje.error===''?'success':'error'}
-						message={mensaje.error===''? 'eliminado': mensaje.error}
+						variant={mensaje.error === '' ? 'success' : 'error'}
+						message={mensaje.error === '' ? 'eliminado' : mensaje.error}
 					/>
 				</Snackbar>
 				<Modal
@@ -734,7 +739,7 @@ export default function Anexos() {
 				</Modal>
 				<div className={classes.tableWrapper}>
 					<Table stickyHeader aria-label="sticky table" size="small">
-						<TableHead>
+						<TableHead >
 							<TableRow>
 								<StyledTableCell key='1' onClick={handleId}>ID</StyledTableCell>
 								<StyledTableCell key='2' onClick={handleNombre}>Nombre</StyledTableCell>
@@ -765,7 +770,7 @@ export default function Anexos() {
 										})}
 										{listaBotones.map(botones => (
 											botones.nombre === 'Editar' ?
-												<TableCell align='center'>
+												<TableCell align='center' className={classes.celdas}>
 													<Link to={`/smnuAnexo/editar?id_anexo=${row.id_anexo}`}>
 														<Fab size="small" color='primary'>
 															<EditIcon />
@@ -773,7 +778,7 @@ export default function Anexos() {
 													</Link>
 												</TableCell> :
 												botones.nombre === 'Eliminar' ?
-													<TableCell align='center'>
+													<TableCell align='center' className={classes.celdas}>
 														<Fab color='secondary' onClick={() => eliminarAnexo(row.id_anexo)} size="small">
 															<DeleteForeverIcon />
 														</Fab>
