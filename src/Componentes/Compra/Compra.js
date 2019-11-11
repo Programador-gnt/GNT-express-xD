@@ -184,7 +184,7 @@ export default function Compra() {
 					</FormControl>
 					{value === 'rangofechas' ?
 						<FormControl component="fieldset" className={classes.formControl}>
-							<ModalPanel abrir={showModal} titulo='Busqueda de proveedores' funcion={handleModal.bind()} capturarProveedor={recibirProveedor.bind()}/>
+							<ModalPanel abrir={showModal} funcion={handleModal.bind()} capturarProveedor={recibirProveedor.bind()} tipo='PRV'/>
 							<Grid container>
 								<MuiPickersUtilsProvider utils={DateFnsUtils}>
 									<Grid item xs={12} sm={5}>

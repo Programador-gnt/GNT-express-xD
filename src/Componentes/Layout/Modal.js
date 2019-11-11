@@ -47,12 +47,15 @@ const useStyles = makeStyles(theme => ({
 export default function ModalPanel(props) {
 	const classes = useStyles();
 	const [tdocumento, setTdocumento] = React.useState([
-		{ id_tdocumento: '01', alias: 'RUC' },
-		{ id_tdocumento: '02', alias: 'Nombre' },
-		{ id_tdocumento: '03', alias: 'Alias' }
+		{ id_tdocumento: 1, alias: 'RUC' },
+		{ id_tdocumento: 2, alias: 'Nombre' },
+		{ id_tdocumento: 3, alias: 'Alias' }
 	])
 	const [proveedor, setProveedor] = React.useState({
-		id_tdocumento: '01'
+		tipo: props.tipo === 'PRV' ? 'PRV' : '',
+		campo: 1,
+		categoria: '',
+		texto: ''
 	})
 	const [listaProveedores, setListaProveedores] = React.useState([
 		{ id: 1, codigo: 10741, nombre: 'Samuel' },
@@ -83,14 +86,14 @@ export default function ModalPanel(props) {
 		}
 	}
 
-	const enterSelect=(e)=>{
-		if(e.keyCode===13){
+	const enterSelect = (e) => {
+		if (e.keyCode === 13) {
 			document.getElementById('campobusqueda').focus()
 		}
 	}
 
-	const arrowDownCampo=(e)=>{
-		if(e.keyCode===40){
+	const arrowDownCampo = (e) => {
+		if (e.keyCode === 40) {
 			document.getElementById(1).focus()
 		}
 	}
@@ -111,21 +114,21 @@ export default function ModalPanel(props) {
 				<Fade in={props.abrir}>
 					<div className={classes.estiloModal}>
 						<Typography variant="h6">
-							{props.titulo}
+							{props.tipo === 'PRV' ? 'Busqueda de Proveedores' : ''}
 						</Typography>
-						{props.titulo === 'Busqueda de proveedores' ?
+						{props.tipo === 'PRV' ?
 							<Grid container spacing={3}>
 								<Grid item xs={12} sm={4}>
 									<TextField
 										autoFocus
 										required
-										id="id_tdocumento"
+										id="campo"
 										fullWidth
 										select
-										value={proveedor.id_tdocumento}
+										value={proveedor.campo}
 										onKeyDown={enterSelect.bind()}
 										onChange={onChange.bind()}
-										name='id_tdocumento'
+										name='campo'
 										margin="normal">
 										{tdocumento.map(documento => (
 											<MenuItem key={documento.id_tdocumento} value={documento.id_tdocumento}>{documento.alias}</MenuItem>
@@ -135,12 +138,12 @@ export default function ModalPanel(props) {
 								<Grid item xs={12} sm={6}>
 									<TextField
 										required
-										id="campobusqueda"
+										id="texto"
 										fullWidth
 										onKeyDown={arrowDownCampo.bind()}
 										onChange={onChange.bind()}
-										name='campobusqueda'
-										label={proveedor.id_tdocumento === '01' ? 'Número' : proveedor.id_tdocumento === '02' ? 'Nombre' : proveedor.id_tdocumento === '03' ? 'Alias' : ''} />
+										name='texto'
+										label={proveedor.campo === 1 ? 'Ruc' : proveedor.campo === 2 ? 'Nombre' : proveedor.campo === 3 ? 'Alias' : ''} />
 								</Grid>
 								<Grid item xs={12} sm={2}>
 									<Fab size="small" color='primary' className={classes.boton}>
