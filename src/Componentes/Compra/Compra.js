@@ -1,5 +1,5 @@
 import React from 'react';
-import { makeStyles, withStyles } from '@material-ui/core/styles';
+import { makeStyles, withStyles, useTheme } from '@material-ui/core/styles';
 import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
@@ -32,6 +32,14 @@ import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
+import Fade from '@material-ui/core/Fade';
+import PropTypes from 'prop-types';
+import SwipeableViews from 'react-swipeable-views';
+import AppBar from '@material-ui/core/AppBar';
+import Tabs from '@material-ui/core/Tabs';
+import Tab from '@material-ui/core/Tab';
+import Box from '@material-ui/core/Box';
+import CancelIcon from '@material-ui/icons/Cancel';
 
 const useStyles = makeStyles(theme => ({
 	texto: {
@@ -63,15 +71,9 @@ const useStyles = makeStyles(theme => ({
 			marginRight: theme.spacing(2),
 		},
 	},
-	paper: {
-		marginTop: theme.spacing(1),
-		marginBottom: theme.spacing(3),
-		padding: theme.spacing(2),
-		[theme.breakpoints.up(600 + theme.spacing(3) * 2)]: {
-			marginTop: theme.spacing(6),
-			marginBottom: theme.spacing(6),
-			padding: theme.spacing(3),
-		},
+	root: {
+		width: '100%',
+		marginTop: theme.spacing(3),
 	},
 	formControl: {
 		marginLeft: theme.spacing(2)
@@ -82,101 +84,68 @@ const useStyles = makeStyles(theme => ({
 	},
 	fab: {
 		marginLeft: theme.spacing(1),
-		marginTop: theme.spacing(1)
+		marginTop: theme.spacing(1),
+		marginBottom: theme.spacing(1)
 	},
-	table: {
-		marginTop: theme.spacing(3)
+	tableWrapper: {
+		maxHeight: '78%',
+		overflow: 'auto',
+		position: 'fixed',
+		width: '100%',
+	},
+	paper: {
+		width: '45%',
+		zIndex: 1,
+		position: 'relative',
+		alignContent: 'center',
+	},
+	check: {
+		left: theme.spacing(1)
+	},
+	pestaña: {
+		backgroundColor: theme.palette.background.paper,
+		width: '100%',
+		position: 'fixed',
+	},
+	boton: {
+		marginLeft: theme.spacing(30),
+		marginBottom: theme.spacing(4)
+	},
+	back2: {
+		transform: 'translateZ(0px)',
+		position: 'fixed'
 	}
 }));
 
-const columns = [
-	{ id: 'OPE', label: 'OPE', minWidth: 170 },
-	{ id: 'VOU', label: 'VOU', minWidth: 100 },
-	{
-		id: 'fecha',
-		label: 'Fecha',
-		minWidth: 170,
-		align: 'right',
-		format: value => value.toLocaleString(),
-	},
-	{
-		id: 'td',
-		label: 'TD',
-		minWidth: 170,
-		align: 'right',
-		format: value => value.toLocaleString(),
-	},
-	{
-		id: 'serie',
-		label: 'Serie',
-		minWidth: 170,
-		align: 'right',
-		format: value => value.toFixed(2),
-	},
-	{
-		id: 'documento',
-		label: 'Documento',
-		minWidth: 170,
-		align: 'right',
-		format: value => value.toFixed(2),
-	},
-	{
-		id: 'liqgastos',
-		label: 'LiqGastos',
-		minWidth: 170,
-		align: 'right',
-		format: value => value.toFixed(2),
-	},
-	{
-		id: 'oc',
-		label: 'O.C.',
-		minWidth: 170,
-		align: 'right',
-		format: value => value.toFixed(2),
-	},
-	{
-		id: 'documento',
-		label: 'Documento',
-		minWidth: 170,
-		align: 'right',
-		format: value => value.toFixed(2),
-	},
-	{
-		id: 'documento',
-		label: 'Documento',
-		minWidth: 170,
-		align: 'right',
-		format: value => value.toFixed(2),
-	},
-	{
-		id: 'documento',
-		label: 'Documento',
-		minWidth: 170,
-		align: 'right',
-		format: value => value.toFixed(2),
-	},
-	{
-		id: 'documento',
-		label: 'Documento',
-		minWidth: 170,
-		align: 'right',
-		format: value => value.toFixed(2),
-	},
-	{
-		id: 'documento',
-		label: 'Documento',
-		minWidth: 170,
-		align: 'right',
-		format: value => value.toFixed(2),
-	},
-	{
-		id: 'documento',
-		label: 'Documento',
-		minWidth: 170,
-		align: 'right',
-		format: value => value.toFixed(2),
-	},
-];
+function TabPanel(props) {
+	const { children, value, index, ...other } = props;
+
+	return (
+		<Typography
+			component="div"
+			role="tabpanel"
+			hidden={value !== index}
+			id={`full-width-tabpanel-${index}`}
+			aria-labelledby={`full-width-tab-${index}`}
+			{...other}
+		>
+			<Box>{children}</Box>
+		</Typography>
+	);
+}
+
+TabPanel.propTypes = {
+	children: PropTypes.node,
+	index: PropTypes.any.isRequired,
+	value: PropTypes.any.isRequired,
+};
+
+function a11yProps(index) {
+	return {
+		id: `full-width-tab-${index}`,
+		'aria-controls': `full-width-tabpanel-${index}`,
+	};
+}
 
 const StyledTableCell = withStyles(theme => ({
 	head: {
@@ -189,10 +158,33 @@ const StyledTableCell = withStyles(theme => ({
 	},
 }))(TableCell);
 
+
+function formatDateFinal(date) {
+	var d = new Date(date),
+		month = '' + (d.getMonth() + 1),
+		day = '' + d.getDate(),
+		year = d.getFullYear();
+
+	if (month.length < 2) month = '0' + month;
+	if (day.length < 2) day = '0' + day;
+
+	return [day, month, year].join('/');
+}
+
+function formatDateInicial(date) {
+	var d = new Date(date),
+		month = '' + (d.getMonth() + 1),
+		day = '' + d.getDate(),
+		year = d.getFullYear();
+
+	if (month.length < 2) month = '0' + month;
+	if (day.length < 2) day = '0' + day;
+
+	return ['01', month, year].join('/');
+}
+
 export default function Compra() {
 	const classes = useStyles();
-	const [value, setValue] = React.useState('rangofechas');
-	const [selectedDate, setSelectedDate] = React.useState(new Date());
 	const [open, setOpen] = React.useState(false);
 	const [cuerpo, setCuerpo] = React.useState({
 		estado: '01',
@@ -200,24 +192,96 @@ export default function Compra() {
 		nombreProveedor: ''
 	})
 	const [estado, setEstado] = React.useState([
-		{ id_tdocumento: '01', alias: 'Todos los documentos' },
-		{ id_tdocumento: '02', alias: 'Documentos pendientes' },
-		{ id_tdocumento: '03', alias: 'Documentos cerrados' }
+		{ id_tdocumento: '0', alias: 'Todos los documentos' },
+		{ id_tdocumento: '1', alias: 'Documentos pendientes' },
+		{ id_tdocumento: '2', alias: 'Documentos cerrados' }
 	])
 	const [showModal, setShowModal] = React.useState(false)
 	const [listaBotones, setListaBotones] = React.useState([])
-	const [filtro, setFiltro] = React.useState([])
+	const [selectedDateInicio, setSelectedDateInicio] = React.useState(new Date());
+	const [selectedDateFinal, setSelectedDateFinal] = React.useState(new Date());
+	const [filtro, setFiltro] = React.useState(
+		{
+			"btipo": "1",
+			// "b1fecha_inicial": "01/01/2018",
+			// "b1fecha_final": "10/01/2018",
+			"b1fecha_inicial": formatDateInicial(new Date()),
+			"b1fecha_final": formatDateFinal(new Date()),
+			"b1id_proveedor": "0",
+			"b1numliquidacion": "",
+			"b1estado": "0",
+			"b2anho": "0",
+			"b2mes": "0",
+			"b2numoperacion": "0",
+			"b3id_proveedor": "0",
+			"b3id_tdocumento": "0",
+			"b3electronico": "",
+			"b3serie": "0",
+			"b3numero": "0",
+			"b4anho": "0",
+			"b4mes": "0",
+			"b4num_asiento": "0",
+			"b5id_operacion": "0",
+			"page": "1",
+			"rows": "20",
+			"id_operacion": "0",
+			"numoperacion": "0",
+			"num_asiento": "0",
+			"fecha": "",
+			"id_tdocumento": "0",
+			"electronico": "",
+			"serie": "0",
+			"numero": "0",
+			"numliquidacion": "",
+			"id_ocompra": "0",
+			"nm_anexo": "",
+			"moneda": "",
+			"v_neto": "0",
+			"nomestado": "",
+			"glosa": "",
+			"chkcd": "0",
+			"sortcolumn": "fecha",
+			"sortorder": "desc"
+		}
+	)
+	const [panelBusqueda, setPanelBusqueda] = React.useState(false)
+	const page = 0
+	const rowsPerPage = 50
+	const theme = useTheme();
+	const [valor, setValor] = React.useState(0);
+	const [rows, setRows] = React.useState([])
+	const [total, setTotal] = React.useState(0)
 
 	React.useEffect(() => {
 		consultarListaBotones()
+		consultarFiltro()
+		conteo()
 	}, []);
 
-	const handleChange = event => {
-		setValue(event.target.value);
+	const handleChange = () => {
+		setPanelBusqueda(!panelBusqueda)
+	};
+
+	const handleCambio = (event, newValue) => {
+		setValor(newValue);
+	};
+
+	const handleChangeIndex = index => {
+		setValor(index);
 	};
 
 	const handleDateChange = date => {
-		setSelectedDate(date);
+		setFiltro({
+			...filtro,
+			b1fecha_inicial: formatDateFinal(date)
+		})
+	};
+
+	const handleDateChangeFinal = date => {
+		setFiltro({
+			...filtro,
+			b1fecha_final: formatDateFinal(date)
+		})
 	};
 
 	const handleOpen = () => {
@@ -239,17 +303,20 @@ export default function Compra() {
 	}
 
 	const onChange = (e) => {
-		setCuerpo({
-			...cuerpo,
+		setFiltro({
+			...filtro,
 			[e.target.name]: e.target.value
 		})
 	}
 
-	const recibirProveedor = (id_anexo, nm_anexo) => {
+	const recibirProveedor = (id_proveedor, nm_anexo) => {
 		setCuerpo({
 			...cuerpo,
-			codigoProveedor: id_anexo,
 			nombreProveedor: nm_anexo
+		})
+		setFiltro({
+			...filtro,
+			b1id_proveedor: id_proveedor
 		})
 		setShowModal(!showModal)
 	}
@@ -261,9 +328,55 @@ export default function Compra() {
 			});
 	}
 
+	const handleChangeRowsPerPage = event => {
+		filtro.rows = event.target.value
+		consultarFiltro()
+	};
+
+	const handleChangePage = (event, newPage) => {
+		filtro.page = newPage + 1
+		consultarFiltro()
+	}
+
+	const consultarFiltro = () => {
+		consumeWS('POST', 'api/comdocumento/examinar', filtro, '')
+			.then(result => {
+				setRows(result)
+			})
+	}
+
+	const buscarDatos=()=>{
+		consultarFiltro()
+		conteo()
+		setPanelBusqueda(!panelBusqueda)
+	}
+
+	const conteo = async () => {
+		consumeWS('POST', 'api/comdocumento/examinarcontador', filtro, '')
+			.then(result => {
+				setTotal(result)
+			});
+	}
+	const handleFechaInicio = date => {
+		setSelectedDateInicio(date);
+		setFiltro({
+			...filtro,
+			b1fecha_inicial: formatDateFinal(date)
+		})
+	};
+
+	const handleFechaFinal = date => {
+		setSelectedDateFinal(date);
+		setFiltro({
+			...filtro,
+			b1fecha_final: formatDateFinal(date)
+		})
+	};
+
 	return (
 		<React.Fragment>
 			<CssBaseline />
+			<Backdrop open={panelBusqueda} className={classes.back2} />
 			<Backdrop open={open} className={classes.back} />
 			<SpeedDial
 				ariaLabel="SpeedDial tooltip example"
@@ -282,208 +395,233 @@ export default function Compra() {
 								key={botones.nombre}
 								icon={botones.nombre === 'Nuevo' ? <AddCircleIcon /> : botones.nombre === 'Buscar' ? <SearchIcon /> : botones.nombre === 'Imprimir' ? <PrintIcon /> : botones.nombre === 'Excel' ? <InsertDriveFileIcon /> : ''}
 								tooltipTitle={botones.nombre}
-								onClick={botones.nombre === 'Nuevo' ? () => alert('nuevo') : botones.nombre === 'Buscar' ? () => alert('Buscar') : botones.nombre === 'Imprimir' ? () => alert('Imprimir') : botones.nombre === 'Excel' ? () => alert('XLS') : ''}
+								onClick={botones.nombre === 'Nuevo' ? () => alert('nuevo') : botones.nombre === 'Buscar' ? () => handleChange() : botones.nombre === 'Imprimir' ? () => alert('Imprimir') : botones.nombre === 'Excel' ? () => alert('XLS') : ''}
 							/>
 				))}
 			</SpeedDial>
-			<main className={classes.layout}>
-				{listaBotones.map(botones => (
-					botones.nombre === 'Editar' ?
-						null :
-						botones.nombre === 'Eliminar' ?
-							null :
-							<Fab className={classes.fab} color='primary' size="small">
-								{botones.nombre === 'Nuevo' ? <AddCircleIcon /> :
-									botones.nombre === 'Buscar' ? <SearchIcon /> :
-										botones.nombre === 'Imprimir' ? <PrintIcon /> :
-											botones.nombre === 'Excel' ? <InsertDriveFileIcon /> : ''}
-							</Fab>
-				))}
-				<Paper className={classes.paper}>
-					<FormControl component="fieldset">
-						<RadioGroup aria-label="gender" name="gender" value={value} onChange={handleChange}>
-							<FormControlLabel value="rangofechas" control={<Radio color='primary' />} label="Rango de fechas" />
-							<FormControlLabel value="noperacion" control={<Radio color='primary' />} label="Nro. Operación" />
-							<FormControlLabel value="ndocumento" control={<Radio color='primary' />} label="Nro. Documento" />
-							<FormControlLabel value="nvoucher" control={<Radio color='primary' />} label="Nro. Voucher" />
-							<FormControlLabel value="ntransaccion" control={<Radio color='primary' />} label="Nro. Transacción" />
-						</RadioGroup>
-					</FormControl>
-					{value === 'rangofechas' ?
-						<FormControl component="fieldset" className={classes.formControl}>
-							<ModalPanel abrir={showModal} funcion={handleModal.bind()} capturarProveedor={recibirProveedor.bind()} tipo='PRV' />
-							<Grid container>
-								<MuiPickersUtilsProvider utils={DateFnsUtils}>
-									<Grid item xs={12} sm={5}>
-										<KeyboardDatePicker
-											margin="normal"
-											id="date-picker-dialog"
-											label="Date picker dialog"
-											format="MM/dd/yyyy"
-											value={selectedDate}
-											onChange={handleDateChange}
-											KeyboardButtonProps={{
-												'aria-label': 'change date',
-											}}
-										/>
-									</Grid>
-									<Grid item xs={12} sm={2}>
-										<Typography variant="body1" gutterBottom className={classes.texto}>Al</Typography>
-									</Grid>
-									<Grid item xs={12} sm={5}>
-										<KeyboardDatePicker
-											margin="normal"
-											id="date-picker-dialog"
-											label="Date picker dialog"
-											format="MM/dd/yyyy"
-											value={selectedDate}
-											onChange={handleDateChange}
-											KeyboardButtonProps={{
-												'aria-label': 'change date',
-											}}
-										/>
-									</Grid>
-								</MuiPickersUtilsProvider>
 
-							</Grid>
-							<Grid container>
-								<Grid item xs={12} sm={2}>
-									<TextField
-										id="proveedor"
-										name="proveedor"
-										autoComplete="proveedor"
-										value={cuerpo.codigoProveedor}
-										helperText="Presiona F2"
-										label='Proveedor'
-										onKeyDown={tecla.bind()}
-									/>
-								</Grid>
-								<Grid item xs={12} sm={7} className={classes.nombreProveedor}>
-									<Typography variant="body2" gutterBottom>{cuerpo.nombreProveedor}</Typography>
-								</Grid>
-							</Grid>
-							<Grid item xs={12} sm={4}>
-								<TextField
-									required
-									id="estado"
-									select
-									value={cuerpo.estado}
-									name='estado'
-									onChange={onChange.bind()}
-									helperText="Seleccione el tipo de estado"
-									margin="normal">
-									{estado.map(documento => (
-										<MenuItem key={documento.id_tdocumento} value={documento.id_tdocumento}>
-											{documento.alias}
-										</MenuItem>
-									))}
-								</TextField>
-							</Grid>
-							<Grid item xs={12} sm={6}>
-								<TextField
-									id="liquidacion"
-									name="liquidaciondegastos"
-									autoComplete="liquidacion"
-									value={cuerpo.liquidaciondegastos}
-									label='Liquidación de gastos'
-									onChange={onChange.bind()}
+			{listaBotones.map(botones => (
+				botones.nombre === 'Editar' ?
+					null :
+					botones.nombre === 'Eliminar' ?
+						null :
+						<Fab className={classes.fab} color='primary' size="small">
+							{botones.nombre === 'Nuevo' ? <AddCircleIcon /> :
+								botones.nombre === 'Buscar' ? <SearchIcon /> :
+									botones.nombre === 'Imprimir' ? <PrintIcon /> :
+										botones.nombre === 'Excel' ? <InsertDriveFileIcon /> : ''}
+						</Fab>
+			))}
+			<Paper elevation={4} className={classes.root}>
+				<div className={classes.tableWrapper}>
+					<Table stickyHeader aria-label="sticky table" size="small" className={classes.table}>
+						<TableHead >
+							<TableRow>
+								<StyledTableCell >OPE</StyledTableCell>
+								<StyledTableCell >VOU</StyledTableCell>
+								<StyledTableCell align='left' style={{minWidth: 170}}>Fecha</StyledTableCell>
+								<StyledTableCell align='left'>TD</StyledTableCell>
+								<StyledTableCell align='left'>Electrónico</StyledTableCell>
+								<StyledTableCell align='left'>Serie</StyledTableCell>
+								<StyledTableCell align='left'>Documento</StyledTableCell>
+								<StyledTableCell align='left'>LiqGastos</StyledTableCell>
+								<StyledTableCell align='left'>O.C.</StyledTableCell>
+								<StyledTableCell align='left'>Proveedor</StyledTableCell>
+								<StyledTableCell align='left'>Moneda</StyledTableCell>
+								<StyledTableCell align='left'>Neto</StyledTableCell>
+								<StyledTableCell align='left'>Estado</StyledTableCell>
+								<StyledTableCell align='left'>Glosa</StyledTableCell>
+								<StyledTableCell align='left'>CD</StyledTableCell>
+								{listaBotones.map(botones => (
+									botones.nombre === 'Editar' ?
+										<StyledTableCell align='center'>Visualizar</StyledTableCell> :
+										botones.nombre === 'Eliminar' ?
+											null :
+											null
+								))}
+							</TableRow>
+						</TableHead>
+						<TableBody>
+							{rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => {
+								return (
+									<TableRow hover tabIndex={-1} key={row.code}>
+										<TableCell key={index}>{row.id_operacion}</TableCell>
+										<TableCell key={index}>{row.numoperacion}</TableCell>
+										<TableCell key={index}>{formatDateFinal(row.fecha)}</TableCell>
+										<TableCell key={index}>{row.id_tdocumento}</TableCell>
+										<TableCell key={index}>{row.electronico}</TableCell>
+										<TableCell key={index}>{row.serie}</TableCell>
+										<TableCell key={index}>{row.numero}</TableCell>
+										<TableCell key={index}>{row.numliquidacion}</TableCell>
+										<TableCell key={index}>{row.id_ocompra}</TableCell>
+										<TableCell key={index}>{row.nm_anexo}</TableCell>
+										<TableCell key={index}>{row.moneda}</TableCell>
+										<TableCell key={index}>{row.v_neto}</TableCell>
+										<TableCell key={index}>{row.nomestado}</TableCell>
+										<TableCell key={index}>{row.glosa}</TableCell>
+										<TableCell key={index}>{row.chkcd}</TableCell>
+										{listaBotones.map(botones => (
+											botones.nombre === 'Editar' ?
+												<TableCell align='center' className={classes.celdas}>
+													<Fab size="small" color='primary'>
+														<SearchIcon />
+													</Fab>
+												</TableCell> :
+												botones.nombre === 'Eliminar' ?
+													null :
+													null
+										))}
+									</TableRow>
+								);
+							})}
+							<TableRow>
+								<TablePagination
+									rowsPerPageOptions={[10, 20, 50]}
+									count={total}
+									rowsPerPage={filtro.rows}
+									page={filtro.page - 1}
+									onChangePage={handleChangePage}
+									onChangeRowsPerPage={handleChangeRowsPerPage}
+									labelRowsPerPage={'Items por página'}
+									labelDisplayedRows={({ from, to, count }) => `${from}-${to} de ${count}`}
 								/>
-							</Grid>
-						</FormControl> :
-						value === 'noperacion' ?
-							<FormControl component="fieldset" className={classes.formControl}>
-								<p>Nro operación</p>
-							</FormControl> :
-							value === 'ndocumento' ?
+							</TableRow>
+						</TableBody>
+					</Table>
+				</div>
+				<Fade in={panelBusqueda} mountOnEnter unmountOnExit timeout={1000}>
+					<div className={classes.pestaña}>
+						<AppBar position="static" color="default">
+							<Tabs
+								value={valor}
+								onChange={handleCambio}
+								indicatorColor="primary"
+								textColor="primary"
+								variant="fullWidth"
+								aria-label="full width tabs example"
+							>
+								<Tab label={<Typography variant='caption'>Fechas</Typography>} {...a11yProps(0)} />
+								<Tab label={<Typography variant='caption'>Operación</Typography>} {...a11yProps(1)} />
+								<Tab label={<Typography variant='caption'>Documento</Typography>} {...a11yProps(2)} />
+								<Tab label={<Typography variant='caption'>Voucher</Typography>} {...a11yProps(3)} />
+								<Tab label={<Typography variant='caption'>Transacción</Typography>} {...a11yProps(4)} />
+							</Tabs>
+						</AppBar>
+						<SwipeableViews
+							axis={theme.direction === 'rtl' ? 'x-reverse' : 'x'}
+							index={valor}
+							onChangeIndex={handleChangeIndex}
+						>
+							<TabPanel value={valor} index={0} dir={theme.direction}>
 								<FormControl component="fieldset" className={classes.formControl}>
-									<p>Nro Documento</p>
-								</FormControl> :
-								value === 'nvoucher' ?
-									<FormControl component="fieldset" className={classes.formControl}>
-										<p>Nro Voucher</p>
-									</FormControl> :
-									value === 'ntransaccion' ?
-										<FormControl component="fieldset" className={classes.formControl}>
-											<p>Nro Transacción</p>
-										</FormControl> :
-										null
-					}
-					<div>
-						<Table stickyHeader aria-label="sticky table" size="small" className={classes.table}>
-							<TableHead >
-								<TableRow>
-									<StyledTableCell key='1' >OPE</StyledTableCell>
-									<StyledTableCell key='2' >VOU</StyledTableCell>
-									<StyledTableCell key='3' align='right' >Fecha</StyledTableCell>
-									<StyledTableCell key='4' align='right' >TD</StyledTableCell>
-									<StyledTableCell key='5' align='right' >Serie</StyledTableCell>
-									<StyledTableCell key='6' align='right'>Documento</StyledTableCell>
-									<StyledTableCell key='7' align='right'>LiqGastos</StyledTableCell>
-									<StyledTableCell key='8' align='right' >O.C.</StyledTableCell>
-									<StyledTableCell key='9' align='right' >Proveedor</StyledTableCell>
-									<StyledTableCell key='10' align='right' >Moneda</StyledTableCell>
-									<StyledTableCell key='11' align='right' >Neto</StyledTableCell>
-									<StyledTableCell key='12' align='right' >Glosa</StyledTableCell>
-									<StyledTableCell key='13' align='right' >CD</StyledTableCell>
-									<StyledTableCell key='14' align='right' >Estado</StyledTableCell>
-									{listaBotones.map(botones => (
-										botones.nombre === 'Editar' ?
-											<StyledTableCell key='15' align='center'>Editar</StyledTableCell> :
-											botones.nombre === 'Eliminar' ?
-												<StyledTableCell key='16' align='center'>Eliminar</StyledTableCell> :
-												null
-									))}
-								</TableRow>
-							</TableHead>
-							<TableBody>
-								{/* {rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(row => {
-									return (
-										<TableRow hover tabIndex={-1} key={row.code}>
-											{columns.map(column => {
-												const value = row[column.id];
-												return (
-													<TableCell key={column.id} align={column.align}>
-														{column.format && typeof value === 'number' ? column.format(value) : value}
-													</TableCell>
-												);
-											})}
-											{listaBotones.map(botones => (
-												botones.nombre === 'Editar' ?
-													<TableCell align='center' className={classes.celdas}>
-														<Link to={`/smnuAnexo/editar?id_anexo=${row.id_anexo}`}>
-															<Fab size="small" color='primary'>
-																<EditIcon />
-															</Fab>
-														</Link>
-													</TableCell> :
-													botones.nombre === 'Eliminar' ?
-														<TableCell align='center' className={classes.celdas}>
-															<Fab color='secondary' onClick={() => eliminarAnexo(row.id_anexo)} size="small">
-																<DeleteForeverIcon />
-															</Fab>
-														</TableCell> :
-														null
+									<ModalPanel abrir={showModal} funcion={handleModal.bind()} capturarProveedor={recibirProveedor.bind()} tipo='PRV' />
+									<Grid container>
+										<MuiPickersUtilsProvider utils={DateFnsUtils}>
+											<Grid item xs={12} sm={5}>
+												<KeyboardDatePicker
+													disableToolbar
+													margin='normal'
+													variant="inline"
+													format="dd/MM/yyyy"
+													id="date-picker-inline"
+													label="Inicio"
+													value={selectedDateInicio}
+													onChange={handleFechaInicio}
+													KeyboardButtonProps={{
+														"aria-label": "change date"
+													}}
+												/>
+											</Grid>
+											<Grid item xs={12} sm={2}>
+												<Typography variant="body1" gutterBottom className={classes.texto}>Al</Typography>
+											</Grid>
+											<Grid item xs={12} sm={5}>
+												<KeyboardDatePicker
+													disableToolbar
+													margin='normal'
+													variant="inline"
+													format="dd/MM/yyyy"
+													id="date-picker-inline"
+													label="Fin"
+													value={selectedDateFinal}
+													onChange={handleFechaFinal}
+													KeyboardButtonProps={{
+														"aria-label": "change date"
+													}}
+												/>
+											</Grid>
+										</MuiPickersUtilsProvider>
+									</Grid>
+									<Grid container>
+										<Grid item xs={12} sm={2}>
+											<TextField
+												id="proveedor"
+												name="b1id_proveedor"
+												autoComplete="proveedor"
+												value={filtro.b1id_proveedor}
+												helperText="Presiona F2"
+												label='Proveedor'
+												onKeyDown={tecla.bind()}
+											/>
+										</Grid>
+										<Grid item xs={12} sm={7} className={classes.nombreProveedor}>
+											<Typography variant="body2" gutterBottom>{cuerpo.nombreProveedor}</Typography>
+										</Grid>
+									</Grid>
+									<Grid item xs={12} sm={4}>
+										<TextField
+											required
+											id="estado"
+											select
+											value={filtro.b1estado}
+											name='b1estado'
+											onChange={onChange.bind()}
+											helperText="Seleccione el tipo de estado"
+											margin="normal">
+											{estado.map(documento => (
+												<MenuItem key={documento.id_tdocumento} value={documento.id_tdocumento}>
+													{documento.alias}
+												</MenuItem>
 											))}
-										</TableRow>
-									);
-								})}
-								<TableRow>
-									<TablePagination
-										rowsPerPageOptions={[10, 25, 50]}
-										count={total}
-										rowsPerPage={filtro.rows}
-										page={filtro.page - 1}
-										onChangePage={handleChangePage}
-										onChangeRowsPerPage={handleChangeRowsPerPage}
-										labelRowsPerPage={'Items por página'}
-										labelDisplayedRows={({ from, to, count }) => `${from}-${to} de ${count}`}
-									/>
-								</TableRow> */}
-							</TableBody>
-						</Table>
+										</TextField>
+									</Grid>
+									<Grid item xs={12} sm={6}>
+										<TextField
+											id="liquidacion"
+											name="b1numliquidacion"
+											autoComplete="liquidacion"
+											value={filtro.b1numliquidacion}
+											label='Liquidación de gastos'
+											onChange={onChange.bind()}
+										/>
+									</Grid>
+									<div>
+										<Fab className={classes.fab} color='primary' size="small" onClick={() => buscarDatos()}>
+											<SearchIcon />
+										</Fab>
+										<Fab className={classes.fab} color='secondary' size="small" onClick={() => handleChange()} >
+											<CancelIcon />
+										</Fab>
+									</div>
+								</FormControl>
+							</TabPanel>
+							<TabPanel value={valor} index={1} dir={theme.direction}>
+								Item 2
+        				</TabPanel>
+							<TabPanel value={valor} index={2} dir={theme.direction}>
+								Item 3
+        				</TabPanel>
+							<TabPanel value={valor} index={3} dir={theme.direction}>
+								Item 4
+        				</TabPanel>
+							<TabPanel value={valor} index={4} dir={theme.direction}>
+								Item 5
+        				</TabPanel>
+						</SwipeableViews>
 					</div>
-				</Paper>
-			</main>
+
+				</Fade>
+			</Paper>
 		</React.Fragment>
 	);
 }
