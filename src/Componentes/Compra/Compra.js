@@ -1,8 +1,5 @@
 import React from 'react';
 import { makeStyles, withStyles, useTheme } from '@material-ui/core/styles';
-import Radio from '@material-ui/core/Radio';
-import RadioGroup from '@material-ui/core/RadioGroup';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormControl from '@material-ui/core/FormControl';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Grid from '@material-ui/core/Grid';
@@ -10,6 +7,7 @@ import DateFnsUtils from '@date-io/date-fns';
 import {
 	MuiPickersUtilsProvider,
 	KeyboardDatePicker,
+	DatePicker
 } from '@material-ui/pickers';
 import Typography from '@material-ui/core/Typography';
 import SpeedDial from '@material-ui/lab/SpeedDial';
@@ -40,6 +38,7 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Box from '@material-ui/core/Box';
 import CancelIcon from '@material-ui/icons/Cancel';
+import Modal from '@material-ui/core/Modal';
 
 const useStyles = makeStyles(theme => ({
 	texto: {
@@ -114,6 +113,17 @@ const useStyles = makeStyles(theme => ({
 	back2: {
 		transform: 'translateZ(0px)',
 		position: 'fixed'
+	},
+	modal: {
+		display: 'flex',
+		alignItems: 'center',
+		justifyContent: 'center',
+	},
+	estiloModal: {
+		backgroundColor: theme.palette.background.paper,
+		border: '2px solid #000',
+		boxShadow: theme.shadows[5],
+		padding: theme.spacing(2, 4, 3),
 	}
 }));
 
@@ -199,6 +209,7 @@ export default function Compra() {
 	const [showModal, setShowModal] = React.useState(false)
 	const [listaBotones, setListaBotones] = React.useState([])
 	const [selectedDateInicio, setSelectedDateInicio] = React.useState(new Date());
+	const [selectedDateFiltro, setSelectedDateFiltro] = React.useState(selectedDateInicio);
 	const [selectedDateFinal, setSelectedDateFinal] = React.useState(new Date());
 	const [filtro, setFiltro] = React.useState(
 		{
@@ -251,6 +262,20 @@ export default function Compra() {
 	const [valor, setValor] = React.useState(0);
 	const [rows, setRows] = React.useState([])
 	const [total, setTotal] = React.useState(0)
+	const [openOPE, setOpenOPE] = React.useState(false)
+	const [openVOU, setOpenVOU] = React.useState(false)
+	const [openFecha, setOpenFecha] = React.useState(false)
+	const [openTD, setOpenTD] = React.useState(false)
+	const [openElectronico, setOpenElectronico] = React.useState(false)
+	const [openSerie, setOpenSerie] = React.useState(false)
+	const [openNumero, setOpenNumero] = React.useState(false)
+	const [openLiquidacion, setOpenLiquidacion] = React.useState(false)
+	const [openOC, setOpenOC] = React.useState(false)
+	const [openProveedor, setOpenProveedor] = React.useState(false)
+	const [openMoneda, setOpenMoneda] = React.useState(false)
+	const [openNeto, setOpenNeto] = React.useState(false)
+	const [openEstado, setOpenEstado] = React.useState(false)
+	const [openGlosa, setOpenGlosa] = React.useState(false)
 
 	React.useEffect(() => {
 		consultarListaBotones()
@@ -268,20 +293,6 @@ export default function Compra() {
 
 	const handleChangeIndex = index => {
 		setValor(index);
-	};
-
-	const handleDateChange = date => {
-		setFiltro({
-			...filtro,
-			b1fecha_inicial: formatDateFinal(date)
-		})
-	};
-
-	const handleDateChangeFinal = date => {
-		setFiltro({
-			...filtro,
-			b1fecha_final: formatDateFinal(date)
-		})
 	};
 
 	const handleOpen = () => {
@@ -345,7 +356,7 @@ export default function Compra() {
 			})
 	}
 
-	const buscarDatos=()=>{
+	const buscarDatos = () => {
 		consultarFiltro()
 		conteo()
 		setPanelBusqueda(!panelBusqueda)
@@ -373,6 +384,147 @@ export default function Compra() {
 		})
 	};
 
+	const Enter = (e) => {
+		if (e.keyCode === 13) {
+			consultarFiltro()
+			conteo()
+			setOpenOPE(false)
+			setOpenVOU(false)
+			setOpenFecha(false)
+			setOpenTD(false)
+			setOpenElectronico(false)
+			setOpenSerie(false)
+			setOpenNumero(false)
+			setOpenLiquidacion(false)
+			setOpenOC(false)
+			setOpenProveedor(false)
+			setOpenMoneda(false)
+			setOpenNeto(false)
+			setOpenEstado(false)
+			setOpenGlosa(false)
+		}
+	}
+
+	const handleCloseOPE = () => {
+		setOpenOPE(false)
+	}
+
+	const handleOPE = () => {
+		setOpenOPE(true)
+	}
+
+	const handleCloseVOU = () => {
+		setOpenVOU(false)
+	}
+
+	const handleVOU = () => {
+		setOpenVOU(true)
+	}
+
+	const handleCloseFecha = () => {
+		setOpenFecha(false)
+	}
+
+	const handleFecha = () => {
+		setOpenFecha(true)
+	}
+
+	const handleFechaFiltro = date => {
+		setSelectedDateFiltro(date);
+		setFiltro({
+			...filtro,
+			fecha: formatDateFinal(date)
+		})
+	}
+
+	const handleCloseTD = () => {
+		setOpenTD(false)
+	}
+
+	const handleTD = () => {
+		setOpenTD(true)
+	}
+
+	const handleCloseElectronico = () => {
+		setOpenElectronico(false)
+	}
+
+	const handleElectronico = () => {
+		setOpenElectronico(true)
+	}
+
+	const handleCloseSerie = () => {
+		setOpenSerie(false)
+	}
+
+	const handleSerie = () => {
+		setOpenSerie(true)
+	}
+
+	const handleCloseNumero = () => {
+		setOpenNumero(false)
+	}
+
+	const handleNumero = () => {
+		setOpenNumero(true)
+	}
+
+	const handleCloseLiquidacion = () => {
+		setOpenLiquidacion(false)
+	}
+
+	const handleLiquidacion = () => {
+		setOpenLiquidacion(true)
+	}
+
+	const handleCloseOC = () => {
+		setOpenOC(false)
+	}
+
+	const handleOC = () => {
+		setOpenOC(true)
+	}
+
+	const handleCloseProveedor = () => {
+		setOpenProveedor(false)
+	}
+
+	const handleProveedor = () => {
+		setOpenProveedor(true)
+	}
+
+	const handleCloseMoneda = () => {
+		setOpenMoneda(false)
+	}
+
+	const handleMoneda = () => {
+		setOpenMoneda(true)
+	}
+
+	const handleCloseNeto = () => {
+		setOpenNeto(false)
+	}
+
+	const handleNeto = () => {
+		setOpenNeto(true)
+	}
+
+	const handleCloseEstado = () => {
+		setOpenEstado(false)
+	}
+
+	const handleEstado = () => {
+		setOpenEstado(true)
+	}
+
+	const handleCloseGlosa = () => {
+		setOpenGlosa(false)
+	}
+
+	const handleGlosa = () => {
+		setOpenGlosa(true)
+	}
+
 	return (
 		<React.Fragment>
 			<CssBaseline />
@@ -399,7 +551,444 @@ export default function Compra() {
 							/>
 				))}
 			</SpeedDial>
-
+			<Modal
+				aria-labelledby='transition-modal-title'
+				aria-describedby="transition-modal-description"
+				className={classes.modal}
+				open={openOPE}
+				onClose={handleCloseOPE}
+				closeAfterTransition
+				BackdropComponent={Backdrop}
+				BackdropProps={{ timeout: 500 }}>
+				<Fade in={openOPE}>
+					<div className={classes.estiloModal}>
+						<Typography variant="h6">
+							Buscar
+						</Typography>
+						<TextField
+							variant="outlined"
+							margin="normal"
+							required
+							fullWidth
+							id="id_operacion"
+							label="ID de operación"
+							name="id_operacion"
+							autoComplete="id_operacion"
+							autoFocus
+							onChange={onChange.bind()}
+							onKeyDown={Enter.bind()}
+							value={filtro.id_operacion}
+						/>
+					</div>
+				</Fade>
+			</Modal>
+			<Modal
+				aria-labelledby='transition-modal-title'
+				aria-describedby="transition-modal-description"
+				className={classes.modal}
+				open={openVOU}
+				onClose={handleCloseVOU}
+				closeAfterTransition
+				BackdropComponent={Backdrop}
+				BackdropProps={{ timeout: 500 }}>
+				<Fade in={openVOU}>
+					<div className={classes.estiloModal}>
+						<Typography variant="h6">
+							Buscar
+						</Typography>
+						<TextField
+							variant="outlined"
+							margin="normal"
+							required
+							fullWidth
+							id="numoperacion"
+							label="Número de voucher"
+							name="numoperacion"
+							autoComplete="numoperacion"
+							autoFocus
+							onChange={onChange.bind()}
+							onKeyDown={Enter.bind()}
+							value={filtro.numoperacion}
+						/>
+					</div>
+				</Fade>
+			</Modal>
+			<Modal
+				aria-labelledby='transition-modal-title'
+				aria-describedby="transition-modal-description"
+				className={classes.modal}
+				open={openFecha}
+				onClose={handleCloseFecha}
+				closeAfterTransition
+				BackdropComponent={Backdrop}
+				BackdropProps={{ timeout: 500 }}>
+				<Fade in={openFecha}>
+					<div className={classes.estiloModal}>
+						<Typography variant="h6">
+							Buscar
+						</Typography>
+						<MuiPickersUtilsProvider utils={DateFnsUtils}>
+							<Grid item xs={12}>
+								<KeyboardDatePicker
+									disableToolbar
+									margin='normal'
+									variant="inline"
+									format="dd/MM/yyyy"
+									id="date-picker-inline"
+									label="Fecha"
+									value={selectedDateFiltro}
+									onChange={handleFechaFiltro}
+									onKeyDown={Enter.bind()}
+									KeyboardButtonProps={{
+										"aria-label": "change date"
+									}}
+								/>
+							</Grid>
+						</MuiPickersUtilsProvider>
+					</div>
+				</Fade>
+			</Modal>
+			<Modal
+				aria-labelledby='transition-modal-title'
+				aria-describedby="transition-modal-description"
+				className={classes.modal}
+				open={openTD}
+				onClose={handleCloseTD}
+				closeAfterTransition
+				BackdropComponent={Backdrop}
+				BackdropProps={{ timeout: 500 }}>
+				<Fade in={openTD}>
+					<div className={classes.estiloModal}>
+						<Typography variant="h6">
+							Buscar
+						</Typography>
+						<TextField
+							variant="outlined"
+							margin="normal"
+							required
+							fullWidth
+							id="id_tdocumento"
+							label="Tipo de documento"
+							name="id_tdocumento"
+							autoComplete="id_tdocumento"
+							autoFocus
+							onChange={onChange.bind()}
+							onKeyDown={Enter.bind()}
+							value={filtro.id_tdocumento}
+						/>
+					</div>
+				</Fade>
+			</Modal>
+			<Modal
+				aria-labelledby='transition-modal-title'
+				aria-describedby="transition-modal-description"
+				className={classes.modal}
+				open={openElectronico}
+				onClose={handleCloseElectronico}
+				closeAfterTransition
+				BackdropComponent={Backdrop}
+				BackdropProps={{ timeout: 500 }}>
+				<Fade in={openElectronico}>
+					<div className={classes.estiloModal}>
+						<Typography variant="h6">
+							Buscar
+						</Typography>
+						<TextField
+							variant="outlined"
+							margin="normal"
+							required
+							fullWidth
+							id="electronico"
+							label="Electrónico"
+							name="electronico"
+							autoComplete="electronico"
+							autoFocus
+							onChange={onChange.bind()}
+							onKeyDown={Enter.bind()}
+							value={filtro.electronico}
+						/>
+					</div>
+				</Fade>
+			</Modal>
+			<Modal
+				aria-labelledby='transition-modal-title'
+				aria-describedby="transition-modal-description"
+				className={classes.modal}
+				open={openSerie}
+				onClose={handleCloseSerie}
+				closeAfterTransition
+				BackdropComponent={Backdrop}
+				BackdropProps={{ timeout: 500 }}>
+				<Fade in={openSerie}>
+					<div className={classes.estiloModal}>
+						<Typography variant="h6">
+							Buscar
+						</Typography>
+						<TextField
+							variant="outlined"
+							margin="normal"
+							required
+							fullWidth
+							id="serie"
+							label="Serie"
+							name="serie"
+							autoComplete="serie"
+							autoFocus
+							onChange={onChange.bind()}
+							onKeyDown={Enter.bind()}
+							value={filtro.serie}
+						/>
+					</div>
+				</Fade>
+			</Modal>
+			<Modal
+				aria-labelledby='transition-modal-title'
+				aria-describedby="transition-modal-description"
+				className={classes.modal}
+				open={openNumero}
+				onClose={handleCloseNumero}
+				closeAfterTransition
+				BackdropComponent={Backdrop}
+				BackdropProps={{ timeout: 500 }}>
+				<Fade in={openNumero}>
+					<div className={classes.estiloModal}>
+						<Typography variant="h6">
+							Buscar
+						</Typography>
+						<TextField
+							variant="outlined"
+							margin="normal"
+							required
+							fullWidth
+							id="numero"
+							label="Número de documento"
+							name="numero"
+							autoComplete="numero"
+							autoFocus
+							onChange={onChange.bind()}
+							onKeyDown={Enter.bind()}
+							value={filtro.numero}
+						/>
+					</div>
+				</Fade>
+			</Modal>
+			<Modal
+				aria-labelledby='transition-modal-title'
+				aria-describedby="transition-modal-description"
+				className={classes.modal}
+				open={openLiquidacion}
+				onClose={handleCloseLiquidacion}
+				closeAfterTransition
+				BackdropComponent={Backdrop}
+				BackdropProps={{ timeout: 500 }}>
+				<Fade in={openLiquidacion}>
+					<div className={classes.estiloModal}>
+						<Typography variant="h6">
+							Buscar
+						</Typography>
+						<TextField
+							variant="outlined"
+							margin="normal"
+							required
+							fullWidth
+							id="numliquidacion"
+							label="Número de liquidación"
+							name="numliquidacion"
+							autoComplete="numliquidacion"
+							autoFocus
+							onChange={onChange.bind()}
+							onKeyDown={Enter.bind()}
+							value={filtro.numliquidacion}
+						/>
+					</div>
+				</Fade>
+			</Modal>
+			<Modal
+				aria-labelledby='transition-modal-title'
+				aria-describedby="transition-modal-description"
+				className={classes.modal}
+				open={openOC}
+				onClose={handleCloseOC}
+				closeAfterTransition
+				BackdropComponent={Backdrop}
+				BackdropProps={{ timeout: 500 }}>
+				<Fade in={openOC}>
+					<div className={classes.estiloModal}>
+						<Typography variant="h6">
+							Buscar
+						</Typography>
+						<TextField
+							variant="outlined"
+							margin="normal"
+							required
+							fullWidth
+							id="id_ocompra"
+							label="Órden de compra"
+							name="id_ocompra"
+							autoComplete="id_ocompra"
+							autoFocus
+							onChange={onChange.bind()}
+							onKeyDown={Enter.bind()}
+							value={filtro.id_ocompra}
+						/>
+					</div>
+				</Fade>
+			</Modal>
+			<Modal
+				aria-labelledby='transition-modal-title'
+				aria-describedby="transition-modal-description"
+				className={classes.modal}
+				open={openProveedor}
+				onClose={handleCloseProveedor}
+				closeAfterTransition
+				BackdropComponent={Backdrop}
+				BackdropProps={{ timeout: 500 }}>
+				<Fade in={openProveedor}>
+					<div className={classes.estiloModal}>
+						<Typography variant="h6">
+							Buscar
+						</Typography>
+						<TextField
+							variant="outlined"
+							margin="normal"
+							required
+							fullWidth
+							id="nm_anexo"
+							label="Proveedor"
+							name="nm_anexo"
+							autoComplete="nm_anexo"
+							autoFocus
+							onChange={onChange.bind()}
+							onKeyDown={Enter.bind()}
+							value={filtro.nm_anexo}
+						/>
+					</div>
+				</Fade>
+			</Modal>
+			<Modal
+				aria-labelledby='transition-modal-title'
+				aria-describedby="transition-modal-description"
+				className={classes.modal}
+				open={openMoneda}
+				onClose={handleCloseMoneda}
+				closeAfterTransition
+				BackdropComponent={Backdrop}
+				BackdropProps={{ timeout: 500 }}>
+				<Fade in={openMoneda}>
+					<div className={classes.estiloModal}>
+						<Typography variant="h6">
+							Buscar
+						</Typography>
+						<TextField
+							variant="outlined"
+							margin="normal"
+							required
+							fullWidth
+							id="moneda"
+							label="Moneda"
+							name="moneda"
+							autoComplete="moneda"
+							autoFocus
+							onChange={onChange.bind()}
+							onKeyDown={Enter.bind()}
+							value={filtro.moneda}
+						/>
+					</div>
+				</Fade>
+			</Modal>
+			<Modal
+				aria-labelledby='transition-modal-title'
+				aria-describedby="transition-modal-description"
+				className={classes.modal}
+				open={openNeto}
+				onClose={handleCloseNeto}
+				closeAfterTransition
+				BackdropComponent={Backdrop}
+				BackdropProps={{ timeout: 500 }}>
+				<Fade in={openNeto}>
+					<div className={classes.estiloModal}>
+						<Typography variant="h6">
+							Buscar
+						</Typography>
+						<TextField
+							variant="outlined"
+							margin="normal"
+							required
+							fullWidth
+							id="v_neto"
+							label="Neto"
+							name="v_neto"
+							autoComplete="v_neto"
+							autoFocus
+							onChange={onChange.bind()}
+							onKeyDown={Enter.bind()}
+							value={filtro.v_neto}
+						/>
+					</div>
+				</Fade>
+			</Modal>
+			<Modal
+				aria-labelledby='transition-modal-title'
+				aria-describedby="transition-modal-description"
+				className={classes.modal}
+				open={openEstado}
+				onClose={handleCloseEstado}
+				closeAfterTransition
+				BackdropComponent={Backdrop}
+				BackdropProps={{ timeout: 500 }}>
+				<Fade in={openEstado}>
+					<div className={classes.estiloModal}>
+						<Typography variant="h6">
+							Buscar
+						</Typography>
+						<TextField
+							variant="outlined"
+							margin="normal"
+							required
+							fullWidth
+							id="nomestado"
+							label="Estado"
+							name="nomestado"
+							autoComplete="nomestado"
+							autoFocus
+							onChange={onChange.bind()}
+							onKeyDown={Enter.bind()}
+							value={filtro.nomestado}
+						/>
+					</div>
+				</Fade>
+			</Modal>
+			<Modal
+				aria-labelledby='transition-modal-title'
+				aria-describedby="transition-modal-description"
+				className={classes.modal}
+				open={openGlosa}
+				onClose={handleCloseGlosa}
+				closeAfterTransition
+				BackdropComponent={Backdrop}
+				BackdropProps={{ timeout: 500 }}>
+				<Fade in={openGlosa}>
+					<div className={classes.estiloModal}>
+						<Typography variant="h6">
+							Buscar
+						</Typography>
+						<TextField
+							variant="outlined"
+							margin="normal"
+							required
+							fullWidth
+							id="glosa"
+							label="Glosa"
+							name="glosa"
+							autoComplete="glosa"
+							autoFocus
+							onChange={onChange.bind()}
+							onKeyDown={Enter.bind()}
+							value={filtro.glosa}
+						/>
+					</div>
+				</Fade>
+			</Modal>
 			{listaBotones.map(botones => (
 				botones.nombre === 'Editar' ?
 					null :
@@ -417,20 +1006,20 @@ export default function Compra() {
 					<Table stickyHeader aria-label="sticky table" size="small" className={classes.table}>
 						<TableHead >
 							<TableRow>
-								<StyledTableCell >OPE</StyledTableCell>
-								<StyledTableCell >VOU</StyledTableCell>
-								<StyledTableCell align='left' style={{minWidth: 170}}>Fecha</StyledTableCell>
-								<StyledTableCell align='left'>TD</StyledTableCell>
-								<StyledTableCell align='left'>Electrónico</StyledTableCell>
-								<StyledTableCell align='left'>Serie</StyledTableCell>
-								<StyledTableCell align='left'>Documento</StyledTableCell>
-								<StyledTableCell align='left'>LiqGastos</StyledTableCell>
-								<StyledTableCell align='left'>O.C.</StyledTableCell>
-								<StyledTableCell align='left'>Proveedor</StyledTableCell>
-								<StyledTableCell align='left'>Moneda</StyledTableCell>
-								<StyledTableCell align='left'>Neto</StyledTableCell>
-								<StyledTableCell align='left'>Estado</StyledTableCell>
-								<StyledTableCell align='left'>Glosa</StyledTableCell>
+								<StyledTableCell onClick={rows.length < 1 ? '' : handleOPE}>OPE</StyledTableCell>
+								<StyledTableCell onClick={rows.length < 1 ? '' : handleVOU}>VOU</StyledTableCell>
+								<StyledTableCell align='left' style={{ minWidth: 170 }} onClick={rows.length < 1 ? '' : handleFecha}>Fecha</StyledTableCell>
+								<StyledTableCell align='left' onClick={rows.length < 1 ? '' : handleTD}>TD</StyledTableCell>
+								<StyledTableCell align='left' onClick={rows.length < 1 ? '' : handleElectronico}>Electrónico</StyledTableCell>
+								<StyledTableCell align='left' onClick={rows.length < 1 ? '' : handleSerie}>Serie</StyledTableCell>
+								<StyledTableCell align='left' onClick={rows.length < 1 ? '' : handleNumero}>Documento</StyledTableCell>
+								<StyledTableCell align='left' onClick={rows.length < 1 ? '' : handleLiquidacion}>LiqGastos</StyledTableCell>
+								<StyledTableCell align='left' onClick={rows.length < 1 ? '' : handleOC}>O.C.</StyledTableCell>
+								<StyledTableCell align='left' onClick={rows.length < 1 ? '' : handleProveedor}>Proveedor</StyledTableCell>
+								<StyledTableCell align='left' onClick={rows.length < 1 ? '' : handleMoneda}>Moneda</StyledTableCell>
+								<StyledTableCell align='left' onClick={rows.length < 1 ? '' : handleNeto}>Neto</StyledTableCell>
+								<StyledTableCell align='left'  onClick={rows.length < 1 ? '' : handleEstado}>Estado</StyledTableCell>
+								<StyledTableCell align='left'  onClick={rows.length < 1 ? '' : handleGlosa}>Glosa</StyledTableCell>
 								<StyledTableCell align='left'>CD</StyledTableCell>
 								{listaBotones.map(botones => (
 									botones.nombre === 'Editar' ?
@@ -562,6 +1151,7 @@ export default function Compra() {
 												helperText="Presiona F2"
 												label='Proveedor'
 												onKeyDown={tecla.bind()}
+												onChange={onChange.bind()}
 											/>
 										</Grid>
 										<Grid item xs={12} sm={7} className={classes.nombreProveedor}>
