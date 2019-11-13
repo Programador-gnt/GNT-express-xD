@@ -6,8 +6,7 @@ import Grid from '@material-ui/core/Grid';
 import DateFnsUtils from '@date-io/date-fns';
 import {
 	MuiPickersUtilsProvider,
-	KeyboardDatePicker,
-	DatePicker
+	KeyboardDatePicker
 } from '@material-ui/pickers';
 import Typography from '@material-ui/core/Typography';
 import SpeedDial from '@material-ui/lab/SpeedDial';
@@ -39,6 +38,7 @@ import Tab from '@material-ui/core/Tab';
 import Box from '@material-ui/core/Box';
 import CancelIcon from '@material-ui/icons/Cancel';
 import Modal from '@material-ui/core/Modal';
+import { Link } from 'react-router-dom'
 
 const useStyles = makeStyles(theme => ({
 	texto: {
@@ -1018,8 +1018,8 @@ export default function Compra() {
 								<StyledTableCell align='left' onClick={rows.length < 1 ? '' : handleProveedor}>Proveedor</StyledTableCell>
 								<StyledTableCell align='left' onClick={rows.length < 1 ? '' : handleMoneda}>Moneda</StyledTableCell>
 								<StyledTableCell align='left' onClick={rows.length < 1 ? '' : handleNeto}>Neto</StyledTableCell>
-								<StyledTableCell align='left'  onClick={rows.length < 1 ? '' : handleEstado}>Estado</StyledTableCell>
-								<StyledTableCell align='left'  onClick={rows.length < 1 ? '' : handleGlosa}>Glosa</StyledTableCell>
+								<StyledTableCell align='left' onClick={rows.length < 1 ? '' : handleEstado}>Estado</StyledTableCell>
+								<StyledTableCell align='left' onClick={rows.length < 1 ? '' : handleGlosa}>Glosa</StyledTableCell>
 								<StyledTableCell align='left'>CD</StyledTableCell>
 								{listaBotones.map(botones => (
 									botones.nombre === 'Editar' ?
@@ -1052,9 +1052,9 @@ export default function Compra() {
 										{listaBotones.map(botones => (
 											botones.nombre === 'Editar' ?
 												<TableCell align='center' className={classes.celdas}>
-													<Fab size="small" color='primary'>
+													<Link to='/sssmnuCTBCompra/editar'><Fab size="small" color='primary'>
 														<SearchIcon />
-													</Fab>
+													</Fab></Link>
 												</TableCell> :
 												botones.nombre === 'Eliminar' ?
 													null :
