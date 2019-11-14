@@ -575,7 +575,7 @@ export default function ModificarCompra() {
 							</Grid>
 							<Grid item xs={12} sm={4}>
 								<Typography variant='body1' align="left" className={classes.texto}>
-									Samuel Bustamante S.A.
+									Nombre de proveedor
           						</Typography>
 							</Grid>
 							<Grid item xs={12} sm={6} />
@@ -984,7 +984,7 @@ export default function ModificarCompra() {
 									required
 									fullWidth
 									autoComplete="123"
-									helperText="campo"
+									helperText=" "
 									className={classes.campo}
 								/>
 							</Grid>
@@ -993,7 +993,7 @@ export default function ModificarCompra() {
 									required
 									fullWidth
 									autoComplete="123"
-									helperText="campo"
+									helperText=" "
 									className={classes.campo}
 								/>
 							</Grid>
@@ -1002,7 +1002,7 @@ export default function ModificarCompra() {
 									required
 									fullWidth
 									autoComplete="123"
-									helperText="campo"
+									helperText=" "
 									className={classes.campo}
 								/>
 							</Grid>
