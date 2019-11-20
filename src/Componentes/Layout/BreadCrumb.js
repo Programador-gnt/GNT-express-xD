@@ -1,35 +1,47 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import Paper from '@material-ui/core/Paper';
 import Breadcrumbs from '@material-ui/core/Breadcrumbs';
-import Link from '@material-ui/core/Link';
+import Typography from '@material-ui/core/Typography';
+import { Link as RouterLink } from 'react-router-dom';
+import { Route } from 'react-router-dom';
 import HomeIcon from '@material-ui/icons/Home';
+import { makeStyles } from '@material-ui/core/styles';
+import routes from '../../routes'
 
 const useStyles = makeStyles(theme => ({
-	root: {
-		padding: theme.spacing(1, 2),
-	},
-	link: {
-		display: 'flex',
-	},
-	icon: {
-		marginRight: theme.spacing(0.5),
-		width: 20,
-		height: 20,
-	},
+	crumb: {
+		marginLeft: theme.spacing(1)
+	}
 }));
 
-export default function BreadCrumbs() {
-	const classes = useStyles();
+export default function Breadcrumb() {
+	const classes = useStyles()
+	return <Route>
+		{
+			({ location }) => {
+				const pathnames = location.pathname.split('/').filter(x => x);
+				return (
+					<Breadcrumbs aria-label="Breadcrumb" className={classes.crumb} Route={routes}>
+						<RouterLink style={{ color: 'inherit' }} to="/">
+							<HomeIcon />
+						</RouterLink>
+						{pathnames.map((value, index) => {
+							const last = index === pathnames.length - 1;
+							const to = `/${pathnames.slice(0, index + 1).join('/')}`;
 
-	return (
-		<Paper elevation={0} className={classes.root}>
-			<Breadcrumbs aria-label="breadcrumb">
-				<Link color="inherit" href="/" className={classes.link}>
-					<HomeIcon className={classes.icon} />
-					Inicio
-        </Link>
-			</Breadcrumbs>
-		</Paper>
-	);
+							return last ? (
+								<Typography variant='body1' key={to}>
+									{value === 'smnuAnexo' ? 'Lista de anexos' : value === 'sssmnuCTBCompra' ? 'Registro de compra' : value}
+								</Typography>
+							) : (
+									<RouterLink variant='body1' to={to} key={to}>
+										{value === 'smnuAnexo' ? 'Lista de anexos' : value === 'sssmnuCTBCompra' ? 'Registro de compra' : value}
+									</RouterLink>
+								);
+						})}
+					</Breadcrumbs>
+				);
+			}
+		}
+	</Route >
+
 }

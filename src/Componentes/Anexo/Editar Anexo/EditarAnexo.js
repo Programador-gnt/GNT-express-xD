@@ -49,7 +49,7 @@ const useStyles = makeStyles(theme => ({
 		marginRight: theme.spacing(2),
 		marginTop: theme.spacing(12),
 		[theme.breakpoints.up(600 + theme.spacing(2) * 2)]: {
-			width: 600,
+			width: 800,
 			marginLeft: 'auto',
 			marginRight: 'auto',
 		},
@@ -159,7 +159,6 @@ function MySnackbarContentWrapper(props) {
 
 export default function EditarAnexo(props) {
 	const classes = useStyles();
-	var id
 	const [anexo, setAnexo] = React.useState({})
 	const [tdocumento, setTdocumento] = React.useState([])
 	const [pais, setPais] = React.useState([])
@@ -173,15 +172,6 @@ export default function EditarAnexo(props) {
 	const [cancel, setCancel] = React.useState(false)
 	const [nuevo, setNuevo] = React.useState(false)
 
-	React.useEffect(() => {
-		id = recibirAnexo().id_anexo
-		consultarApi()
-		consultarDocumento()
-		consultarPais()
-		consultarExamine()
-		consultarListaAnexoMaestro()
-	}, []);
-
 	const recibirAnexo = () => {
 		let hash = window.location.hash;
 		let qString = hash.split('?')[1];
@@ -193,6 +183,8 @@ export default function EditarAnexo(props) {
 		}
 		return qStringObject;
 	}
+
+	var id = recibirAnexo().id_anexo
 
 	const onChange = (e) => {
 		setAnexo({
@@ -263,7 +255,7 @@ export default function EditarAnexo(props) {
 			})
 	}
 
-	const guardarCategoria = async () => {
+	const guardarCategoria = () => {
 		consumeWS('POST', 'api/anexomaestro/insertar', categoria, '')
 			.then(result => {
 				setMensaje(result)
@@ -337,6 +329,12 @@ export default function EditarAnexo(props) {
 	const irNuevo = () => {
 		setNuevo(true)
 	}
+
+	React.useEffect(consultarApi, [])
+	React.useEffect(consultarDocumento, [])
+	React.useEffect(consultarPais, [])
+	React.useEffect(consultarExamine, [])
+	React.useEffect(consultarListaAnexoMaestro, [])
 
 	if (nuevo === true) {
 		return (<Redirect to={`/smnuAnexo/nuevo`} />)
@@ -489,7 +487,7 @@ export default function EditarAnexo(props) {
 							<Grid item xs={12} sm={6}>
 								<TextField
 									required
-									id="id_tdocumento"
+									id="id_pais"
 									fullWidth
 									select
 									value={anexo.id_pais}

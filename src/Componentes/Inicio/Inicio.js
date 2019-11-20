@@ -18,8 +18,8 @@ function Inicio() {
         <React.Fragment>
             <CssBaseline />
             <Paper elevation={4} className={classes.root}>
-                Aqui va el Inicio
-        </Paper>
+               
+            </Paper>
         </React.Fragment>
     );
 }

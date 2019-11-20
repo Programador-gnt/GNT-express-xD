@@ -7,16 +7,6 @@ import Config from '../Config/Config';
 function MenuMobile(props) {
 	const [menu, setMenu] = React.useState([])
 
-	React.useEffect(() => {
-		if (localStorage.getItem('Token') === null) {
-
-		} else {
-			var datos = JSON.parse(localStorage.getItem("Token"));
-			var token = datos.accessToken
-			consultarapi(token)
-		}
-	}, []);
-
 	const consultarapi = async (token) => {
 		await fetch(`${Config.url}api/menu/treelistar`, {
 			method: 'GET',
@@ -42,7 +32,7 @@ function MenuMobile(props) {
 
 		menu.forEach(function (menuItem) {
 			let menuItemChildren = [];
-			
+
 
 			if (menuItem.children.length > 0) {
 				menuItemChildren = obtenerMenus(menuItem.children);
@@ -66,6 +56,14 @@ function MenuMobile(props) {
 	var menuclases = 'menumobile';
 	if (props.mostrar) {
 		menuclases = 'menumobile open';
+	}
+
+	if (localStorage.getItem('Token') === null) {
+
+	} else {
+		var datos = JSON.parse(localStorage.getItem("Token"));
+		var token = datos.accessToken
+		consultarapi(token)
 	}
 
 	return (

@@ -1,7 +1,7 @@
 import React from 'react';
 import Paper from '@material-ui/core/Paper';
 // import Slide from '@material-ui/core/Slide';
-import { withStyles, makeStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -47,7 +47,7 @@ const variantIcon = {
 const useStyles = makeStyles(theme => ({
 	root: {
 		width: '100%',
-		marginTop: theme.spacing(10),
+		marginTop: theme.spacing(12),
 	},
 	paper: {
 		zIndex: 1,
@@ -100,6 +100,11 @@ const useStyles = makeStyles(theme => ({
 	},
 	celdas: {
 		width: '5px'
+	},
+	tablecell: {
+		backgroundColor: '#4a48b2',
+		color: theme.palette.common.white,
+		cursor: 'pointer'
 	}
 }));
 
@@ -135,43 +140,31 @@ const columns = [
 		id: 'nm_alias',
 		label: 'Alias',
 		minWidth: 170,
-		align: 'right',
+		align: 'left',
 		format: value => value.toLocaleString(),
 	},
 	{
 		id: 'tdocumento',
 		label: 'Tipo de Documento',
 		minWidth: 170,
-		align: 'right',
+		align: 'left',
 		format: value => value.toLocaleString(),
 	},
 	{
 		id: 'ruc',
 		label: 'N° Documento',
 		minWidth: 170,
-		align: 'right',
+		align: 'left',
 		format: value => value.toFixed(2),
 	},
 	{
 		id: 'nomestado',
 		label: 'Estado',
 		minWidth: 170,
-		align: 'right',
+		align: 'left',
 		format: value => value.toFixed(2),
 	},
 ];
-
-const StyledTableCell = withStyles(theme => ({
-	head: {
-		backgroundColor: '#4a48b2',
-		color: theme.palette.common.white,
-		cursor: 'pointer'
-	},
-	body: {
-		fontSize: 14,
-	},
-}))(TableCell);
-
 
 export default function Anexos() {
 	const classes = useStyles();
@@ -218,15 +211,12 @@ export default function Anexos() {
 	const [pdfBody, setPdfBody] = React.useState([])
 	const [totalGeneral, setTotalGeneral] = React.useState(0)
 
-	React.useEffect(() => {
-		consultaAnexo()
-		conteo()
-		consultarListaBotones()
+	const consultaTotalGenetal = () => {
 		consumeWS('POST', 'api/anexo/examinarcontador', filtro, '')
 			.then(result => {
 				setTotalGeneral(result)
 			});
-	}, []);
+	}
 
 	const consultaAnexo = async () => {
 		consumeWS('POST', 'api/anexo/examinar', filtro, '')
@@ -353,10 +343,6 @@ export default function Anexos() {
 
 	const irNuevo = () => {
 		setNuevo(true)
-	}
-
-	if (nuevo === true) {
-		return (<Redirect to={`/smnuAnexo/nuevo`} />)
 	}
 
 	const consultarListaBotones = () => {
@@ -538,6 +524,15 @@ export default function Anexos() {
 			saveAs(blob, 'Anexos.xlsx');
 		});
 
+	}
+
+	React.useEffect(consultaAnexo, [])
+	React.useEffect(conteo, [])
+	React.useEffect(consultarListaBotones, [])
+	React.useEffect(consultaTotalGenetal, [])
+
+	if (nuevo === true) {
+		return (<Redirect to={`/smnuAnexo/nuevo`} />)
 	}
 
 	return (
@@ -741,17 +736,17 @@ export default function Anexos() {
 					<Table stickyHeader aria-label="sticky table" size="small">
 						<TableHead >
 							<TableRow>
-								<StyledTableCell key='1' onClick={handleId}>ID</StyledTableCell>
-								<StyledTableCell key='2' onClick={handleNombre}>Nombre</StyledTableCell>
-								<StyledTableCell key='3' align='right' onClick={handleAlias}>Alias</StyledTableCell>
-								<StyledTableCell key='4' align='right' onClick={handletdocumento}>Tipo de Documento</StyledTableCell>
-								<StyledTableCell key='5' align='right' onClick={handleNDocumento}>N° Documento</StyledTableCell>
-								<StyledTableCell key='6' align='right'>Estado</StyledTableCell>
+								<TableCell key='1' onClick={handleId} className={classes.tablecell} style={{ backgroundColor: filtro.id_anexo === '' ? '#4a48b2' : filtro.id_anexo === 0 ? '#4a48b2' : '#1281FF' }}>ID</TableCell>
+								<TableCell key='2' onClick={handleNombre} className={classes.tablecell} style={{ backgroundColor: filtro.nm_anexo === '' ? '#4a48b2' : '#1281FF' }}>Nombre</TableCell>
+								<TableCell key='3' align='left' onClick={handleAlias} className={classes.tablecell} style={{ backgroundColor: filtro.nm_alias === '' ? '#4a48b2' : '#1281FF' }}>Alias</TableCell>
+								<TableCell key='4' align='left' onClick={handletdocumento} className={classes.tablecell} style={{ backgroundColor: filtro.tdocumento === '' ? '#4a48b2' : '#1281FF' }}>Tipo de Documento</TableCell>
+								<TableCell key='5' align='left' onClick={handleNDocumento} className={classes.tablecell} style={{ backgroundColor: filtro.ruc === '' ? '#4a48b2' : '#1281FF' }}>N° Documento</TableCell>
+								<TableCell key='6' align='left' className={classes.tablecell}>Estado</TableCell>
 								{listaBotones.map(botones => (
 									botones.nombre === 'Editar' ?
-										<StyledTableCell key='7' align='center'>Editar</StyledTableCell> :
+										<TableCell key='7' align='center' className={classes.tablecell}>Editar</TableCell> :
 										botones.nombre === 'Eliminar' ?
-											<StyledTableCell key='8' align='center'>Eliminar</StyledTableCell> :
+											<TableCell key='8' align='center' className={classes.tablecell}>Eliminar</TableCell> :
 											null
 								))}
 							</TableRow>

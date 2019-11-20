@@ -9,9 +9,10 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 import { Redirect } from 'react-router-dom';
 import MenuMobile from './MenuMobile';
-import HamburgerMenu from './Hamburg';
+import MenuIcon from '@material-ui/icons/Menu';
 import consumeWS from '../Config/WebService';
 import Backdrop from '@material-ui/core/Backdrop';
+import BreadCrumb from './BreadCrumb'
 
 const useStyles = makeStyles(theme => ({
 	root: {
@@ -27,6 +28,10 @@ const useStyles = makeStyles(theme => ({
 		transform: 'translateZ(0px)',
 		position: 'fixed',
 		zIndex: 100
+	},
+	bar:{
+		marginTop: theme.spacing(8),
+		backgroundColor: 'white'
 	}
 }));
 
@@ -38,14 +43,6 @@ export default function MenuAppBar() {
 	const [abrir, setAbrir] = React.useState(false)
 	const [perfil, setPerfil] = React.useState({})
 	const open = Boolean(anchorEl);
-
-	React.useEffect(() => {
-		if (localStorage.getItem('Token') === null) {
-
-		} else {
-			consultarPerfil()
-		}
-	}, []);
 
 	const consultarPerfil = () => {
 		consumeWS('GET', 'api/usuario/obtener', '', '')
@@ -75,23 +72,16 @@ export default function MenuAppBar() {
 
 	if (localStorage.getItem('Token') === null) {
 		return (<Redirect to='/login' />)
+	} else {
+		consultarPerfil()
 	}
 
 	return (
 		<div className={classes.root}>
 			<AppBar>
 				<Toolbar>
-					<IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu">
-						<HamburgerMenu
-							isOpen={abrir}
-							menuClicked={() => Abrir()}
-							width={18}
-							height={15}
-							strokeWidth={1}
-							rotate={0}
-							color='white'
-							borderRadius={0}
-							animationDuration={0.5} />
+					<IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu" onClick={() => Abrir()}>
+						<MenuIcon />
 					</IconButton>
 					<Typography variant="h6" noWrap>
 						NEW TRANSPORT S.A.
@@ -128,9 +118,13 @@ export default function MenuAppBar() {
 						</Menu>
 					</div>
 				</Toolbar>
+				<AppBar className={classes.bar}>
+					<BreadCrumb />
+				</AppBar>
 			</AppBar>
 			<MenuMobile mostrar={showMenu} />
-			<Backdrop open={showMenu} className={classes.back} onClick={()=>Abrir()}/>
+			<Backdrop open={showMenu} className={classes.back} onClick={() => Abrir()} />
+
 		</div>
 	);
 }
