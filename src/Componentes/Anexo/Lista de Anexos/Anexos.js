@@ -38,6 +38,7 @@ import 'jspdf-autotable';
 import { saveAs } from 'file-saver';
 import Fab from '@material-ui/core/Fab';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
+import FilterListIcon from '@material-ui/icons/FilterList';
 
 const variantIcon = {
 	error: ErrorIcon,
@@ -165,6 +166,16 @@ const columns = [
 		format: value => value.toFixed(2),
 	},
 ];
+
+const useToolbarStyles = makeStyles(theme => ({
+	root: {
+		paddingLeft: theme.spacing(2),
+		paddingRight: theme.spacing(1)
+	},
+	title: {
+		flex: '1 1 100%'
+	}
+}));
 
 export default function Anexos() {
 	const classes = useStyles();
@@ -526,6 +537,15 @@ export default function Anexos() {
 
 	}
 
+	const ordenamiento = () => {
+		setFiltro({
+			...filtro,
+			sortcolumn: filtro.sortcolumn === 'nm_anexo' ? '' : 'nm_anexo'
+		})
+		consultaAnexo()
+		conteo()
+	}
+
 	React.useEffect(consultaAnexo, [])
 	React.useEffect(conteo, [])
 	React.useEffect(consultarListaBotones, [])
@@ -737,7 +757,9 @@ export default function Anexos() {
 						<TableHead >
 							<TableRow>
 								<TableCell key='1' onClick={handleId} className={classes.tablecell} style={{ backgroundColor: filtro.id_anexo === '' ? '#4a48b2' : filtro.id_anexo === 0 ? '#4a48b2' : '#1281FF' }}>ID</TableCell>
-								<TableCell key='2' onClick={handleNombre} className={classes.tablecell} style={{ backgroundColor: filtro.nm_anexo === '' ? '#4a48b2' : '#1281FF' }}>Nombre</TableCell>
+								<TableCell key='2' onClick={handleNombre} className={classes.tablecell} style={{ backgroundColor: filtro.nm_anexo === '' ? '#4a48b2' : '#1281FF' }}>Nombre <IconButton style={{color:'white'}} aria-label="Ordenar" onClick={() => ordenamiento()}>
+									<FilterListIcon />
+								</IconButton></TableCell>
 								<TableCell key='3' align='left' onClick={handleAlias} className={classes.tablecell} style={{ backgroundColor: filtro.nm_alias === '' ? '#4a48b2' : '#1281FF' }}>Alias</TableCell>
 								<TableCell key='4' align='left' onClick={handletdocumento} className={classes.tablecell} style={{ backgroundColor: filtro.tdocumento === '' ? '#4a48b2' : '#1281FF' }}>Tipo de Documento</TableCell>
 								<TableCell key='5' align='left' onClick={handleNDocumento} className={classes.tablecell} style={{ backgroundColor: filtro.ruc === '' ? '#4a48b2' : '#1281FF' }}>N° Documento</TableCell>
