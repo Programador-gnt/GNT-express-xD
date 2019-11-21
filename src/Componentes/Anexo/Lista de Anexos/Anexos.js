@@ -895,11 +895,11 @@ export default function Anexos() {
 					<Table stickyHeader aria-label="sticky table" size="small">
 						<TableHead >
 							<TableRow>
-								<TableCell key='1' onClick={handleClickId} onDoubleClick={handleDoubleClickId} className={classes.tablecell} style={{ cursor: 'pointer', backgroundColor: filtro.id_anexo === '' ? '#4a48b2' : filtro.id_anexo === 0 ? '#4a48b2' : '#1281FF' }}>Id<ArrowDropDownIcon /></TableCell>
-								<TableCell key='2' onClick={handleClickNombre} onDoubleClick={handleDoubleClickNombre} className={classes.tablecell} style={{ cursor: 'pointer', backgroundColor: filtro.nm_anexo === '' ? '#4a48b2' : '#1281FF' }}>Nombre<ArrowDropDownIcon /></TableCell>
-								<TableCell key='3' align='left' onClick={handleClickAlias} onDoubleClick={handleDoubleClickAlias} className={classes.tablecell} style={{ cursor: 'pointer', backgroundColor: filtro.nm_alias === '' ? '#4a48b2' : '#1281FF' }}>Alias<ArrowDropDownIcon /></TableCell>
-								<TableCell key='4' align='left' onClick={handleClicktdocumento} onDoubleClick={handleDoubleClicktdocumento} className={classes.tablecell} style={{ cursor: 'pointer', backgroundColor: filtro.tdocumento === '' ? '#4a48b2' : '#1281FF' }}>Tipo de Documento<ArrowDropDownIcon /></TableCell>
-								<TableCell key='5' align='left' onClick={handleClickNDocumento} onDoubleClick={handleDoubleClickNDocumento} className={classes.tablecell} style={{ cursor: 'pointer', backgroundColor: filtro.ruc === '' ? '#4a48b2' : '#1281FF' }}>N° Documento<ArrowDropDownIcon /></TableCell>
+								<TableCell key='1' onClick={handleClickId} onDoubleClick={handleDoubleClickId} className={classes.tablecell} style={{ cursor: 'pointer', backgroundColor: filtro.id_anexo === '' ? '#4a48b2' : filtro.id_anexo === 0 ? '#4a48b2' : '#1281FF' }}>Id</TableCell>
+								<TableCell key='2' onClick={handleClickNombre} onDoubleClick={handleDoubleClickNombre} className={classes.tablecell} style={{ cursor: 'pointer', backgroundColor: filtro.nm_anexo === '' ? '#4a48b2' : '#1281FF' }}>Nombre</TableCell>
+								<TableCell key='3' align='left' onClick={handleClickAlias} onDoubleClick={handleDoubleClickAlias} className={classes.tablecell} style={{ cursor: 'pointer', backgroundColor: filtro.nm_alias === '' ? '#4a48b2' : '#1281FF' }}>Alias</TableCell>
+								<TableCell key='4' align='left' onClick={handleClicktdocumento} onDoubleClick={handleDoubleClicktdocumento} className={classes.tablecell} style={{ cursor: 'pointer', backgroundColor: filtro.tdocumento === '' ? '#4a48b2' : '#1281FF' }}>Tipo de Documento</TableCell>
+								<TableCell key='5' align='left' onClick={handleClickNDocumento} onDoubleClick={handleDoubleClickNDocumento} className={classes.tablecell} style={{ cursor: 'pointer', backgroundColor: filtro.ruc === '' ? '#4a48b2' : '#1281FF' }}>N° Documento</TableCell>
 								<TableCell key='6' align='left' className={classes.tablecell}>Estado</TableCell>
 								{listaBotones.map(botones => (
 									botones.nombre === 'Editar' ?
