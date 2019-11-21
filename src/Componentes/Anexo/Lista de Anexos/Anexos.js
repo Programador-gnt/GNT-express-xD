@@ -186,10 +186,15 @@ export default function Anexos() {
 		id_empresa: 1,
 		id_anexo: 0,
 		nm_anexo: "",
+		nm_anexo_tb: "0",
+		nm_alias_tb: "0",
 		nm_alias: "",
 		tdocumento: "",
+		tdocumento_tb: "0",
 		ruc: "",
+		ruc_tb: "0",
 		nomestado: "",
+		nomestado_tb: "0",
 		sortcolumn: "",
 		sortorder: "desc"
 	})
@@ -216,6 +221,10 @@ export default function Anexos() {
 	var prevent = false;
 	const [pdfBody, setPdfBody] = React.useState([])
 	const [totalGeneral, setTotalGeneral] = React.useState(0)
+	const filtrar = [
+		{ index: 1, nombre: 'Comienza con' },
+		{ index: 2, nombre: 'Contiene' }
+	]
 
 	React.useEffect(() => {
 		consultaAnexo()
@@ -654,6 +663,82 @@ export default function Anexos() {
 		ordenamientoNDocumento()
 	}
 
+	const onChangeFiltrarNombre = (e) => {
+		setFiltro({
+			...filtro,
+			nm_anexo_tb: e.target.value
+		})
+	}
+
+	const onChangeFiltrarAlias = (e) => {
+		setFiltro({
+			...filtro,
+			nm_alias_tb: e.target.value
+		})
+	}
+
+	const onChangeFiltrartdocumento = (e) => {
+		setFiltro({
+			...filtro,
+			tdocumento_tb: e.target.value
+		})
+	}
+
+	const onChangeFiltrarruc = (e) => {
+		setFiltro({
+			...filtro,
+			ruc_tb: e.target.value
+		})
+	}
+
+	const limpiar = () => {
+		var valores = {
+			page: 1,
+			rows: 50,
+			id_empresa: 1,
+			id_anexo: 0,
+			nm_anexo: "",
+			nm_anexo_tb: "0",
+			nm_alias_tb: "0",
+			nm_alias: "",
+			tdocumento: "",
+			tdocumento_tb: "0",
+			ruc: "",
+			ruc_tb: "0",
+			nomestado: "",
+			nomestado_tb: "0",
+			sortcolumn: "",
+			sortorder: "desc"
+		}
+		setFiltro({
+			page: 1,
+			rows: 50,
+			id_empresa: 1,
+			id_anexo: 0,
+			nm_anexo: "",
+			nm_anexo_tb: "0",
+			nm_alias_tb: "0",
+			nm_alias: "",
+			tdocumento: "",
+			tdocumento_tb: "0",
+			ruc: "",
+			ruc_tb: "0",
+			nomestado: "",
+			nomestado_tb: "0",
+			sortcolumn: "",
+			sortorder: "desc"
+		})
+		consumeWS('POST', 'api/anexo/examinar', valores, '')
+			.then(result => {
+				setRows(result)
+			});
+
+		consumeWS('POST', 'api/anexo/examinarcontador', filtro, '')
+			.then(result => {
+				setTotal(result)
+			});
+	}
+
 	if (nuevo === true) {
 		return (<Redirect to={`/smnuAnexo/nuevo`} />)
 	}
@@ -679,7 +764,7 @@ export default function Anexos() {
 								key={botones.nombre}
 								icon={botones.nombre === 'Buscar' ? <SearchIcon /> : botones.nombre === 'Excel' ? <InsertDriveFileIcon /> : botones.nombre === 'Imprimir' ? <PrintIcon /> : botones.nombre === 'Nuevo' ? <AddCircleIcon /> : ''}
 								tooltipTitle={botones.nombre}
-								onClick={botones.nombre === 'Buscar' ? () => consultaAnexo() : botones.nombre === 'Excel' ? () => excel() : botones.nombre === 'Imprimir' ? () => pdf() : botones.nombre === 'Nuevo' ? () => irNuevo() : ''}
+								onClick={botones.nombre === 'Buscar' ? () => limpiar() : botones.nombre === 'Excel' ? () => excel() : botones.nombre === 'Imprimir' ? () => pdf() : botones.nombre === 'Nuevo' ? () => irNuevo() : ''}
 							/>
 				))}
 			</SpeedDial>
@@ -718,13 +803,14 @@ export default function Anexos() {
 								required
 								select
 								fullWidth
-								value='comienza con'
-								onChange={onChange.bind()}
+								value={filtro.nm_anexo_tb}
+								onChange={onChangeFiltrarNombre.bind()}
 								label="Mostrar filas con valores que"
 								className={classes.campo}
 								margin='normal'>
-								<MenuItem key={1} value='comienza con'>Comienza con</MenuItem>
-								<MenuItem key={2} value='contiene'>Contiene</MenuItem>
+								{filtrar.map(valores => (
+									<MenuItem key={valores.index} value={valores.index}>{valores.nombre}</MenuItem>
+								))}
 							</TextField>
 							<TextField
 								variant="outlined"
@@ -792,13 +878,14 @@ export default function Anexos() {
 								required
 								select
 								fullWidth
-								value='comienza con'
-								onChange={onChange.bind()}
+								value={filtro.nm_alias_tb}
+								onChange={onChangeFiltrarAlias.bind()}
 								label="Mostrar filas con valores que"
 								className={classes.campo}
 								margin='normal'>
-								<MenuItem key={1} value='comienza con'>Comienza con</MenuItem>
-								<MenuItem key={2} value='contiene'>Contiene</MenuItem>
+								{filtrar.map(valores => (
+									<MenuItem key={valores.index} value={valores.index}>{valores.nombre}</MenuItem>
+								))}
 							</TextField>
 							<TextField
 								variant="outlined"
@@ -835,13 +922,14 @@ export default function Anexos() {
 								required
 								select
 								fullWidth
-								value='comienza con'
-								onChange={onChange.bind()}
+								value={filtro.ruc_tb}
+								onChange={onChangeFiltrarruc.bind()}
 								label="Mostrar filas con valores que"
 								className={classes.campo}
 								margin='normal'>
-								<MenuItem key={1} value='comienza con'>Comienza con</MenuItem>
-								<MenuItem key={2} value='contiene'>Contiene</MenuItem>
+								{filtrar.map(valores => (
+									<MenuItem key={valores.index} value={valores.index}>{valores.nombre}</MenuItem>
+								))}
 							</TextField>
 							<TextField
 								variant="outlined"
@@ -874,6 +962,19 @@ export default function Anexos() {
 							<Typography variant="h6">
 								Buscar
 								</Typography>
+							<TextField
+								required
+								select
+								fullWidth
+								value={filtro.tdocumento_tb}
+								onChange={onChangeFiltrartdocumento.bind()}
+								label="Mostrar filas con valores que"
+								className={classes.campo}
+								margin='normal'>
+								{filtrar.map(valores => (
+									<MenuItem key={valores.index} value={valores.index}>{valores.nombre}</MenuItem>
+								))}
+							</TextField>
 							<TextField
 								variant="outlined"
 								margin="normal"

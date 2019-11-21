@@ -20,7 +20,7 @@ export default function Breadcrumb() {
 			({ location }) => {
 				const pathnames = location.pathname.split('/').filter(x => x);
 				return (
-					<Breadcrumbs aria-label="Breadcrumb" className={classes.crumb} Route={routes}>
+					<Breadcrumbs aria-label="Breadcrumb" className={classes.crumb}>
 						<RouterLink style={{ color: 'inherit' }} to="/inicio">
 							<HomeIcon />
 						</RouterLink>
