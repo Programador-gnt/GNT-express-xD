@@ -178,7 +178,7 @@ export default function NuevoAnexo(props) {
 			...anexo,
 			[e.target.name]: e.target.checked
 		})
-		
+
 	}
 
 	const guardar = () => {
@@ -319,7 +319,7 @@ export default function NuevoAnexo(props) {
 						/>
 					</Snackbar>
 					<Typography component="h1" variant="h4" align="center">
-						Crear Anexo
+						Anexo
           			</Typography>
 					<React.Fragment>
 						<Grid container spacing={3}>
@@ -544,7 +544,7 @@ export default function NuevoAnexo(props) {
 											value={anexo.nodomiciliado}
 											name='nodomiciliado'
 											onChange={handleChange.bind()}
-											 />
+										/>
 									}
 									label='No domiciliado'
 									className={classes.campo}

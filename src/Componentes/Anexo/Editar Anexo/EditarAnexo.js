@@ -385,7 +385,7 @@ export default function EditarAnexo(props) {
 						/>
 					</Snackbar>
 					<Typography component="h1" variant="h4" align="center">
-						Editar Anexo
+						Anexo
           			</Typography>
 					<React.Fragment>
 						<Grid container spacing={3}>

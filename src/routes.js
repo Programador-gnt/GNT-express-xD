@@ -14,7 +14,7 @@ const routes = [
 	{ id: '3', path: '/smnuAnexo/editar', name: 'Editar Anexo', component: EditarAnexo },
 	{ id: '4', path: '/smnuAnexo/nuevo', name: 'Nuevo Anexo', component: NuevoAnexo },
 	{ id: '5', path: '/sssmnuCTBCompra', exact: true, name: 'Registro de Compra', component: Compra },
-	{ id: '6', path: '/sssmnuCTBCompra/editar', name: 'Modificar', component: ModificarCompra },
+	{ id: '6', path: '/sssmnuCTBCompra/editarCompra', name: 'Modificar', component: ModificarCompra },
 ];
 
 export default routes;

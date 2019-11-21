@@ -30,11 +30,11 @@ export default function Breadcrumb() {
 
 							return last ? (
 								<Typography variant='body1' key={to}>
-									{value === 'smnuAnexo' ? 'Lista de anexos' : value === 'sssmnuCTBCompra' ? 'Registro de compra' : value}
+									{value === 'smnuAnexo' ? 'Lista de anexos' : value === 'sssmnuCTBCompra' ? 'Lista registro de compra' : value === 'editar' ? 'Anexo' : value === 'editarCompra' ? 'Registro de compra' : value}
 								</Typography>
 							) : (
 									<RouterLink variant='body1' to={to} key={to}>
-										{value === 'smnuAnexo' ? 'Lista de anexos' : value === 'sssmnuCTBCompra' ? 'Registro de compra' : value}
+										{value === 'smnuAnexo' ? 'Lista de anexos' : value === 'sssmnuCTBCompra' ? 'Lista registro de compra' : value === 'editar' ? 'Anexo' : value === 'editarCompra' ? 'Registro de compra' : value}
 									</RouterLink>
 								);
 						})}
@@ -42,6 +42,6 @@ export default function Breadcrumb() {
 				);
 			}
 		}
-	</Route >
+	</Route>
 
 }

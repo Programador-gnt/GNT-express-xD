@@ -1052,7 +1052,7 @@ export default function Compra() {
 										{listaBotones.map(botones => (
 											botones.nombre === 'Editar' ?
 												<TableCell align='center' className={classes.celdas}>
-													<Link to='/sssmnuCTBCompra/editar'><Fab size="small" color='primary'>
+													<Link to='/sssmnuCTBCompra/editarCompra'><Fab size="small" color='primary'>
 														<SearchIcon />
 													</Fab></Link>
 												</TableCell> :

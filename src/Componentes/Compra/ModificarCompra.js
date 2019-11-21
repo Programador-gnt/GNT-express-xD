@@ -482,7 +482,7 @@ export default function ModificarCompra() {
 			<main className={classes.layout}>
 				<Paper className={classes.paper}>
 					<Typography component="h1" variant="h4" align="center">
-						Modificar registro de compras
+						Registro de compras
           			</Typography>
 					<React.Fragment>
 						<Grid container spacing={3}>
