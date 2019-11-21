@@ -38,7 +38,8 @@ import 'jspdf-autotable';
 import { saveAs } from 'file-saver';
 import Fab from '@material-ui/core/Fab';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
-import FilterListIcon from '@material-ui/icons/FilterList';
+import MenuItem from '@material-ui/core/MenuItem';
+import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 
 const variantIcon = {
 	error: ErrorIcon,
@@ -167,15 +168,6 @@ const columns = [
 	},
 ];
 
-const useToolbarStyles = makeStyles(theme => ({
-	root: {
-		paddingLeft: theme.spacing(2),
-		paddingRight: theme.spacing(1)
-	},
-	title: {
-		flex: '1 1 100%'
-	}
-}));
 
 export default function Anexos() {
 	const classes = useStyles();
@@ -206,7 +198,7 @@ export default function Anexos() {
 	const [open, setOpen] = React.useState(false);
 	const [nuevo, setNuevo] = React.useState(false)
 	const [listaBotones, setListaBotones] = React.useState([])
-	const [reporte, setReporte] = React.useState({
+	const reporte = {
 		page: "1",
 		id_empresa: "1",
 		id_anexo: "0",
@@ -218,9 +210,19 @@ export default function Anexos() {
 		sortcolumn: "",
 		sortorder: "desc",
 		rows: 0
-	})
+	}
+	var timer = 0;
+	var delay = 200;
+	var prevent = false;
 	const [pdfBody, setPdfBody] = React.useState([])
 	const [totalGeneral, setTotalGeneral] = React.useState(0)
+
+	React.useEffect(() => {
+		consultaAnexo()
+		conteo()
+		consultarListaBotones()
+		consultaTotalGenetal()
+	}, [])
 
 	const consultaTotalGenetal = () => {
 		consumeWS('POST', 'api/anexo/examinarcontador', filtro, '')
@@ -229,14 +231,14 @@ export default function Anexos() {
 			});
 	}
 
-	const consultaAnexo = async () => {
+	const consultaAnexo = () => {
 		consumeWS('POST', 'api/anexo/examinar', filtro, '')
 			.then(result => {
 				setRows(result)
 			});
 	}
 
-	const conteo = async () => {
+	const conteo = () => {
 		consumeWS('POST', 'api/anexo/examinarcontador', filtro, '')
 			.then(result => {
 				setTotal(result)
@@ -537,19 +539,120 @@ export default function Anexos() {
 
 	}
 
-	const ordenamiento = () => {
+	const ordenamientoId = () => {
+		consultaAnexo()
+		setFiltro({
+			...filtro,
+			sortcolumn: filtro.sortcolumn === 'id_anexo' ? '' : 'id_anexo'
+		})
+	}
+
+	const handleClickId = () => {
+		timer = setTimeout(function () {
+			if (!prevent) {
+				handleId()
+			}
+			prevent = false;
+		}, delay);
+	}
+
+	const handleDoubleClickId = () => {
+		clearTimeout(timer);
+		prevent = true;
+		ordenamientoId()
+	}
+
+	const ordenamientoNombre = () => {
+		consultaAnexo()
 		setFiltro({
 			...filtro,
 			sortcolumn: filtro.sortcolumn === 'nm_anexo' ? '' : 'nm_anexo'
 		})
-		consultaAnexo()
-		conteo()
 	}
 
-	React.useEffect(consultaAnexo, [])
-	React.useEffect(conteo, [])
-	React.useEffect(consultarListaBotones, [])
-	React.useEffect(consultaTotalGenetal, [])
+	const handleClickNombre = () => {
+		timer = setTimeout(function () {
+			if (!prevent) {
+				handleNombre()
+			}
+			prevent = false;
+		}, delay);
+	}
+
+	const handleDoubleClickNombre = () => {
+		clearTimeout(timer);
+		prevent = true;
+		ordenamientoNombre()
+	}
+
+	const ordenamientoAlias = () => {
+		consultaAnexo()
+		setFiltro({
+			...filtro,
+			sortcolumn: filtro.sortcolumn === 'nm_alias' ? '' : 'nm_alias'
+		})
+	}
+
+	const handleClickAlias = () => {
+		timer = setTimeout(function () {
+			if (!prevent) {
+				handleAlias()
+			}
+			prevent = false;
+		}, delay);
+	}
+
+	const handleDoubleClickAlias = () => {
+		clearTimeout(timer);
+		prevent = true;
+		ordenamientoAlias()
+	}
+
+	const ordenamientotdocumento = () => {
+		consultaAnexo()
+		setFiltro({
+			...filtro,
+			sortcolumn: filtro.sortcolumn === 'tdocumento' ? '' : 'tdocumento'
+		})
+	}
+
+	const handleClicktdocumento = () => {
+		timer = setTimeout(function () {
+			if (!prevent) {
+				handletdocumento()
+			}
+			prevent = false;
+		}, delay);
+	}
+
+	const handleDoubleClicktdocumento = () => {
+		clearTimeout(timer);
+		prevent = true;
+		ordenamientotdocumento()
+	}
+
+	const ordenamientoNDocumento = () => {
+		consultaAnexo()
+		setFiltro({
+			...filtro,
+			sortcolumn: filtro.sortcolumn === 'ruc' ? '' : 'ruc'
+		})
+	}
+
+	const handleClickNDocumento = () => {
+		timer = setTimeout(function () {
+			if (!prevent) {
+				handleNDocumento()
+			}
+			prevent = false;
+		}, delay);
+	}
+
+	const handleDoubleClickNDocumento = () => {
+		clearTimeout(timer);
+		prevent = true;
+		ordenamientoNDocumento()
+	}
 
 	if (nuevo === true) {
 		return (<Redirect to={`/smnuAnexo/nuevo`} />)
@@ -611,6 +714,18 @@ export default function Anexos() {
 							<Typography variant="h6">
 								Buscar
 								</Typography>
+							<TextField
+								required
+								select
+								fullWidth
+								value='comienza con'
+								onChange={onChange.bind()}
+								label="Mostrar filas con valores que"
+								className={classes.campo}
+								margin='normal'>
+								<MenuItem key={1} value='comienza con'>Comienza con</MenuItem>
+								<MenuItem key={2} value='contiene'>Contiene</MenuItem>
+							</TextField>
 							<TextField
 								variant="outlined"
 								margin="normal"
@@ -674,6 +789,18 @@ export default function Anexos() {
 								Buscar
 								</Typography>
 							<TextField
+								required
+								select
+								fullWidth
+								value='comienza con'
+								onChange={onChange.bind()}
+								label="Mostrar filas con valores que"
+								className={classes.campo}
+								margin='normal'>
+								<MenuItem key={1} value='comienza con'>Comienza con</MenuItem>
+								<MenuItem key={2} value='contiene'>Contiene</MenuItem>
+							</TextField>
+							<TextField
 								variant="outlined"
 								margin="normal"
 								required
@@ -704,6 +831,18 @@ export default function Anexos() {
 							<Typography variant="h6">
 								Buscar
 								</Typography>
+							<TextField
+								required
+								select
+								fullWidth
+								value='comienza con'
+								onChange={onChange.bind()}
+								label="Mostrar filas con valores que"
+								className={classes.campo}
+								margin='normal'>
+								<MenuItem key={1} value='comienza con'>Comienza con</MenuItem>
+								<MenuItem key={2} value='contiene'>Contiene</MenuItem>
+							</TextField>
 							<TextField
 								variant="outlined"
 								margin="normal"
@@ -756,13 +895,11 @@ export default function Anexos() {
 					<Table stickyHeader aria-label="sticky table" size="small">
 						<TableHead >
 							<TableRow>
-								<TableCell key='1' onClick={handleId} className={classes.tablecell} style={{ backgroundColor: filtro.id_anexo === '' ? '#4a48b2' : filtro.id_anexo === 0 ? '#4a48b2' : '#1281FF' }}>ID</TableCell>
-								<TableCell key='2' onClick={handleNombre} className={classes.tablecell} style={{ backgroundColor: filtro.nm_anexo === '' ? '#4a48b2' : '#1281FF' }}>Nombre <IconButton style={{color:'white'}} aria-label="Ordenar" onClick={() => ordenamiento()}>
-									<FilterListIcon />
-								</IconButton></TableCell>
-								<TableCell key='3' align='left' onClick={handleAlias} className={classes.tablecell} style={{ backgroundColor: filtro.nm_alias === '' ? '#4a48b2' : '#1281FF' }}>Alias</TableCell>
-								<TableCell key='4' align='left' onClick={handletdocumento} className={classes.tablecell} style={{ backgroundColor: filtro.tdocumento === '' ? '#4a48b2' : '#1281FF' }}>Tipo de Documento</TableCell>
-								<TableCell key='5' align='left' onClick={handleNDocumento} className={classes.tablecell} style={{ backgroundColor: filtro.ruc === '' ? '#4a48b2' : '#1281FF' }}>N° Documento</TableCell>
+							<TableCell key='1' onClick={handleClickId} onDoubleClick={handleDoubleClickId} className={classes.tablecell} style={{ backgroundColor: filtro.id_anexo === '' ? '#4a48b2' : filtro.id_anexo === 0 ? '#4a48b2' : '#1281FF' }}>Id<ArrowDropDownIcon/></TableCell>
+								<TableCell key='2' onClick={handleClickNombre} onDoubleClick={handleDoubleClickNombre} className={classes.tablecell} style={{ backgroundColor: filtro.nm_anexo === '' ? '#4a48b2' : '#1281FF' }}>Nombre<ArrowDropDownIcon/></TableCell>
+								<TableCell key='3' align='left' onClick={handleClickAlias} onDoubleClick={handleDoubleClickAlias} className={classes.tablecell} style={{ backgroundColor: filtro.nm_alias === '' ? '#4a48b2' : '#1281FF' }}>Alias<ArrowDropDownIcon/></TableCell>
+								<TableCell key='4' align='left' onClick={handleClicktdocumento} onDoubleClick={handleDoubleClicktdocumento} className={classes.tablecell} style={{ backgroundColor: filtro.tdocumento === '' ? '#4a48b2' : '#1281FF' }}>Tipo de Documento<ArrowDropDownIcon/></TableCell>
+								<TableCell key='5' align='left' onClick={handleClickNDocumento} onDoubleClick={handleDoubleClickNDocumento} className={classes.tablecell} style={{ backgroundColor: filtro.ruc === '' ? '#4a48b2' : '#1281FF' }}>N° Documento<ArrowDropDownIcon/></TableCell>
 								<TableCell key='6' align='left' className={classes.tablecell}>Estado</TableCell>
 								{listaBotones.map(botones => (
 									botones.nombre === 'Editar' ?

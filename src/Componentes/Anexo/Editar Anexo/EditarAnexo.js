@@ -172,6 +172,14 @@ export default function EditarAnexo(props) {
 	const [cancel, setCancel] = React.useState(false)
 	const [nuevo, setNuevo] = React.useState(false)
 
+	React.useEffect(() => {
+		consultarApi()
+		consultarDocumento()
+		consultarPais()
+		consultarExamine()
+		consultarListaAnexoMaestro()
+	}, [])
+
 	const recibirAnexo = () => {
 		let hash = window.location.hash;
 		let qString = hash.split('?')[1];
@@ -329,12 +337,6 @@ export default function EditarAnexo(props) {
 	const irNuevo = () => {
 		setNuevo(true)
 	}
-
-	React.useEffect(consultarApi, [])
-	React.useEffect(consultarDocumento, [])
-	React.useEffect(consultarPais, [])
-	React.useEffect(consultarExamine, [])
-	React.useEffect(consultarListaAnexoMaestro, [])
 
 	if (nuevo === true) {
 		return (<Redirect to={`/smnuAnexo/nuevo`} />)

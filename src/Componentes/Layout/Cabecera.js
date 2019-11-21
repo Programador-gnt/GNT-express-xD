@@ -29,7 +29,7 @@ const useStyles = makeStyles(theme => ({
 		position: 'fixed',
 		zIndex: 100
 	},
-	bar:{
+	bar: {
 		marginTop: theme.spacing(8),
 		backgroundColor: 'white'
 	}
@@ -66,14 +66,26 @@ export default function MenuAppBar() {
 		setAbrir(!abrir)
 	}
 
+	const iniciar = () => {
+		if (salir === true) {
+			return (<Redirect to='/login' />)
+		}
+
+		if (localStorage.getItem('Token') === null) {
+			return (<Redirect to='/login' />)
+		} else {
+			consultarPerfil()
+		}
+	}
+
+	React.useEffect(iniciar, [])
+
 	if (salir === true) {
 		return (<Redirect to='/login' />)
 	}
 
 	if (localStorage.getItem('Token') === null) {
 		return (<Redirect to='/login' />)
-	} else {
-		consultarPerfil()
 	}
 
 	return (

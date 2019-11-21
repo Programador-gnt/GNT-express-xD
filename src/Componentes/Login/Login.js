@@ -29,9 +29,6 @@ function Login() {
 	const [redireccionar, setRedireccionar] = React.useState(false)
 	const [openMensaje, setOpenMensaje] = React.useState(false);
 
-	React.useEffect(() => {
-	}, []);
-
 	const Ingresar = () => {
 		if (login) {
 
