@@ -66,19 +66,7 @@ export default function MenuAppBar() {
 		setAbrir(!abrir)
 	}
 
-	const iniciar = () => {
-		if (salir === true) {
-			return (<Redirect to='/login' />)
-		}
-
-		if (localStorage.getItem('Token') === null) {
-			return (<Redirect to='/login' />)
-		} else {
-			consultarPerfil()
-		}
-	}
-
-	React.useEffect(iniciar, [])
+	React.useEffect(consultarPerfil, [])
 
 	if (salir === true) {
 		return (<Redirect to='/login' />)
