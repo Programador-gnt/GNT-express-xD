@@ -5,7 +5,6 @@ import { Link as RouterLink } from 'react-router-dom';
 import { Route } from 'react-router-dom';
 import HomeIcon from '@material-ui/icons/Home';
 import { makeStyles } from '@material-ui/core/styles';
-import routes from '../../routes'
 
 const useStyles = makeStyles(theme => ({
 	crumb: {
