@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react';
-import { withRouter } from 'react-router-dom';
+import { Redirect, withRouter } from 'react-router-dom';
 import MetisMenu from 'react-metismenu';
 import './MenuMobile.css';
 import Config from '../Config/Config';
@@ -16,7 +16,7 @@ function MenuMobile(props) {
 		})
 			.then(response => {
 				if (response.status === 401) {
-					alert('token Expiró')
+					return props.history.push('/401')
 				} else {
 					return response.json();
 				}
@@ -29,28 +29,29 @@ function MenuMobile(props) {
 	function obtenerMenus(menu) {
 		let menuLista = [];
 		let icono
+		if (menu) {
+			menu.forEach(function (menuItem) {
+				let menuItemChildren = [];
 
-		menu.forEach(function (menuItem) {
-			let menuItemChildren = [];
 
+				if (menuItem.children.length > 0) {
+					menuItemChildren = obtenerMenus(menuItem.children);
+					icono = " fa fa-folder ";
 
-			if (menuItem.children.length > 0) {
-				menuItemChildren = obtenerMenus(menuItem.children);
-				icono = " fa fa-folder ";
+				} if (menuItem.name === "Inicio") {
+					icono = " fa fa-home ";
+				}
 
-			} if (menuItem.name === "Inicio") {
-				icono = " fa fa-home ";
-			}
-
-			let menuNew = {
-				"label": menuItem.name,
-				"icon": icono,
-				"to": "#" + menuItem.url,
-				"content": menuItemChildren
-			}
-			menuLista.push(menuNew);
-		});
-		return menuLista;
+				let menuNew = {
+					"label": menuItem.name,
+					"icon": icono,
+					"to": "#" + menuItem.url,
+					"content": menuItemChildren
+				}
+				menuLista.push(menuNew);
+			});
+			return menuLista;
+		}
 	}
 
 	const iniciar = () => {
