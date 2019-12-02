@@ -45,10 +45,12 @@ export default function MenuAppBar() {
 	const open = Boolean(anchorEl);
 
 	const consultarPerfil = () => {
-		consumeWS('GET', 'api/usuario/obtener', '', '')
-			.then(result => {
-				setPerfil(result)
-			});
+		if (localStorage.getItem('Token')) {
+			consumeWS('GET', 'api/usuario/obtener', '', '')
+				.then(result => {
+					setPerfil(result)
+				});
+		}
 	}
 
 	const handleMenu = event => {
