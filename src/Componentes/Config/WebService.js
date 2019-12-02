@@ -46,7 +46,7 @@ export function consumeWS(Metodo, Url, ParametrosPOST, parametrosGET) {
 	return new Promise(async (resolve, reject) => {
 
 		await fetch(url_ws, peticion)
-			.then(response => response.json())
+			.then(response => response.status === 403 ? alert('No posees permiso para este recurso') : response.json())
 			.then(res => {
 				resolve(res);
 			})
